@@ -7,17 +7,20 @@ function App() {
   return (
     <html>
       <head>
-        <title>Hello from JSX</title>
+        <title>Outschool Rebus Puzzles</title>
+        <style>{".rebus { font-size: 3em; margin: 0.25em}"}</style>
   </head>
   <body>
-  <h1>Hello world</h1>
+  <h1>Outschool Rebus Puzzles</h1>
+  <p class="rebus">🫖🍀</p>
+  <p class="rebus">🧍4️⃣🧑‍🎓</p>
+  <p class="rebus">🙋🚚💵💵</p>
   </body>
   </html>
 );
 }
 
 addEventListener("fetch", (event) => {
-  // renderToString generates html string from JSX components.
   const response = new Response(renderToString(<App />), {
     headers: { "content-type": "text/html; charset=utf-8" },
   });
