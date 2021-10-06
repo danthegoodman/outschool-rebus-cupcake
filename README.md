@@ -22,6 +22,13 @@ deno install --allow-read --allow-write --allow-env --allow-net \
 deployctl run --watch --no-check server.ts
 ```
 
+## Frontend
+
+The frontend is compiled from typescript to JS using babel. 
+Each file is compiled on the fly in esmodule mode.
+We are unable to use npm modules, but you can bring in global UMD libraries easily enough by adding them in the `index.html` file.
+This is how we bring in React.
+
 # Deploy to production
 
 1. Push to master
