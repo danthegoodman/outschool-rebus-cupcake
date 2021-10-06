@@ -1,3 +1,15 @@
+# About
+
+Hosted on deno.dev: [outschool-cupcake-rebus.deno.dev](https://outschool-cupcake-rebus.deno.dev)
+
+# Emojis
+
+1. You can recreate the `emoji-apple.json` file with `fetch-emoji-apple.sh`.
+2. `emoji-custom` is a manually maintained file.
+
+Both files should be a mapping of `:shortname:` to image url.
+In case of a conflict, custom emojis are preferred over the apple ones.
+
 # Development
 
 ```shell
@@ -9,3 +21,9 @@ deno install --allow-read --allow-write --allow-env --allow-net \
 # Run locally
 deployctl run --watch --no-check server.ts
 ```
+
+# Deploy to production
+
+1. Push to master
+2. Wait a few seconds
+3. It's live.

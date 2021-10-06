@@ -1,61 +1,25 @@
-import Babel from "https://dev.jspm.io/@babel/standalone"
+import {handlePublicFile} from "./server/public-files.ts";
+import {textResponse} from "./server/util.ts";
+import {handleRebusList} from "./server/rebus-db.ts";
+import {initEmojiMapping} from "./server/emoji-mapping.ts";
 
 async function handleRequest(request: Request){
   const {pathname} = new URL(request.url);
   switch (pathname) {
     case '/': return handlePublicFile('/index.html');
+    case '/api/rebus-list': return handleRebusList();
     case '/favicon.ico': return new Response(null, {status:404});
-  }
-
-  return handlePublicFile(pathname);
-}
-
-async function handlePublicFile(pathname: string){
-  try {
-    let content = await Deno.readTextFile('public' + pathname)
-    content = maybeTransform(content, pathname);
-    return new Response(content, {
-      headers: {"content-type": assumeContentType(pathname)},
-    });
-  } catch(error) {
-    if(error.name === "NotFound"){
-      return textResponse(`Not Found: ${pathname}`, 404);
-    } else {
-      throw error;
-    }
+    default: return handlePublicFile(pathname);
   }
 }
 
-function maybeTransform(content: string, pathname: string){
-  if(!pathname.match(/.tsx?$/)) return content;
-  return Babel.transform(content, {
-    filename: pathname.slice(1),
-    presets: ['typescript','react']
-  }).code;
-}
-
-function assumeContentType(pathname: string){
-  const suffix = pathname.split('.').slice(-1)[0];
-  switch(suffix){
-    case 'html':
-      return "text/html; charset=utf-8";
-    case 'ts':
-    case 'js':
-    case 'tsx':
-    case 'jsx':
-      return "application/javascript";
-  }
-  return "text/plain";
-}
-
-function textResponse(content: string, status: number){
-  return new Response(content, {
-    headers: {"content-type": 'text/plain'},
-    status,
+addEventListener("load", () => {
+  initEmojiMapping().catch(error=>{
+    console.log("failed to load emojis", error);
   })
-}
+})
 
-addEventListener("fetch", async (event) => {
+addEventListener("fetch", async event => {
   let resp;
   try {
     resp = await handleRequest(event.request);
