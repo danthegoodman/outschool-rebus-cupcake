@@ -32,10 +32,7 @@ cd frontend && yarn start
 
 ## Frontend
 
-The frontend is compiled from typescript to JS using babel.
-Each file is compiled on the fly in esmodule mode.
-We are unable to use npm modules, but you can bring in global UMD libraries easily enough by adding them in the `index.html` file.
-This is how we bring in React.
+The frontend is a create react app frontend that uses a proxy to the backend so both backend and frontend need to be running at the same time. Before committing your frontend changes run `yarn build` for the changes to be available to production.
 
 # Deploy to production
 
