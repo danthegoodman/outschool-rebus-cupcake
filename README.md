@@ -18,13 +18,16 @@ brew install deno
 deno install --allow-read --allow-write --allow-env --allow-net \
     --allow-run --no-check -f https://deno.land/x/deploy/deployctl.ts
 
+# Add deno to path
+export PATH="/Users/username/.deno/bin:$PATH"
+
 # Run locally
 deployctl run --watch --no-check server.ts
 ```
 
 ## Frontend
 
-The frontend is compiled from typescript to JS using babel. 
+The frontend is compiled from typescript to JS using babel.
 Each file is compiled on the fly in esmodule mode.
 We are unable to use npm modules, but you can bring in global UMD libraries easily enough by adding them in the `index.html` file.
 This is how we bring in React.
