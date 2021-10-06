@@ -13,10 +13,8 @@ async function handleRequest(request: Request){
   }
 }
 
-addEventListener("load", () => {
-  initEmojiMapping().catch(error=>{
-    console.log("failed to load emojis", error);
-  })
+initEmojiMapping().catch(error=>{
+  console.log("failed to load emojis", error);
 })
 
 addEventListener("fetch", async event => {
