@@ -21,13 +21,16 @@ interface RebusPuzzle {
 }
 
 export async function handleRebusList() {
-  const items = await testScan([]);
+  const items = await getPuzzlesFromDynamoDB([]);
   return jsonResponse(items);
 }
 
 type RebusDatum = { text: string } | { image: string; shortName: string };
 
-async function testScan(items: any[], startKey?: any): Promise<RebusPuzzle[]> {
+async function getPuzzlesFromDynamoDB(
+  items: any[],
+  startKey?: any
+): Promise<RebusPuzzle[]> {
   if (items.length > 0 && startKey === undefined) {
     return items;
   }
@@ -44,7 +47,7 @@ async function testScan(items: any[], startKey?: any): Promise<RebusPuzzle[]> {
       solution: item.s.S,
     })) ?? [];
 
-  return testScan(newItems, LastEvaluatedKey);
+  return getPuzzlesFromDynamoDB(newItems, LastEvaluatedKey);
 }
 
 export function parseRebus(puzzle: string): RebusDatum[] {
