@@ -4,6 +4,7 @@ import {
   DynamoDBClient,
   ScanCommand,
   PutItemCommand,
+  DeleteItemCommand,
 } from "https://cdn.skypack.dev/@aws-sdk/client-dynamodb@3.20.0?dts";
 
 const client = new DynamoDBClient({
@@ -15,14 +16,45 @@ const client = new DynamoDBClient({
   },
 });
 
-interface RebusPuzzle {
+interface RebusPuzzleOutput {
+  key: string;
+  puzzle: RebusDatum[];
+  solution: string;
+}
+
+interface RebusPuzzleInput {
   puzzle: string;
   solution: string;
 }
 
-export async function handleRebusList() {
-  const items = await getPuzzlesFromDynamoDB([]);
-  return jsonResponse(items);
+export async function handleRebusRequest(request: Request) {
+  if (request.method === "GET") {
+    const items = await getPuzzlesFromDynamoDB([]);
+    return jsonResponse(items);
+  }
+
+  if (request.method === "POST") {
+    const body = await request.json();
+    if (!body.puzzle || !body.solution) {
+      throw new Error("puzzle or solution was not provided");
+    }
+    await putPuzzlesToDynamoDB({
+      puzzle: body.puzzle,
+      solution: body.solution,
+    });
+    const items = await getPuzzlesFromDynamoDB([]);
+    return jsonResponse(items);
+  }
+
+  if (request.method === "DELETE") {
+    const body = await request.json();
+    if (!body.key) {
+      throw new Error("key was not provided");
+    }
+    await deletePuzzlesToDynamoDB(body.key);
+    const items = await getPuzzlesFromDynamoDB([]);
+    return jsonResponse(items);
+  }
 }
 
 type RebusDatum = { text: string } | { image: string; shortName: string };
@@ -30,7 +62,7 @@ type RebusDatum = { text: string } | { image: string; shortName: string };
 async function getPuzzlesFromDynamoDB(
   items: any[],
   startKey?: any
-): Promise<RebusPuzzle[]> {
+): Promise<RebusPuzzleOutput[]> {
   if (items.length > 0 && startKey === undefined) {
     return items;
   }
@@ -41,13 +73,40 @@ async function getPuzzlesFromDynamoDB(
     })
   );
 
-  const newItems =
-    Items?.map((item) => ({
-      puzzle: parseRebus(item.p.S ?? ""),
-      solution: item.s.S,
-    })) ?? [];
+  const newItems = Items?.map(dynamodbToPuzzleResponse) ?? [];
 
   return getPuzzlesFromDynamoDB(newItems, LastEvaluatedKey);
+}
+
+async function putPuzzlesToDynamoDB(item: RebusPuzzleInput) {
+  await client.send(
+    new PutItemCommand({
+      TableName: "cupcake-2021q3-rebus-puzzles",
+      Item: {
+        p: { S: item.puzzle },
+        s: { S: item.solution },
+      },
+    })
+  );
+}
+
+async function deletePuzzlesToDynamoDB(key: string) {
+  await client.send(
+    new DeleteItemCommand({
+      TableName: "cupcake-2021q3-rebus-puzzles",
+      Key: {
+        p: { S: key },
+      },
+    })
+  );
+}
+
+function dynamodbToPuzzleResponse(item: any): RebusPuzzleOutput {
+  return {
+    key: item.p.S,
+    puzzle: parseRebus(item.p.S ?? ""),
+    solution: item.s.S,
+  };
 }
 
 export function parseRebus(puzzle: string): RebusDatum[] {
