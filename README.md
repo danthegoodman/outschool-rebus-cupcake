@@ -12,6 +12,8 @@ In case of a conflict, custom emojis are preferred over the apple ones.
 
 # Development
 
+1. You'll need the `apg` alias for the AWS playground account to gain access to the DynamoDB tables.
+
 ```shell
 # Setup
 brew install deno
@@ -21,8 +23,11 @@ deno install --allow-read --allow-write --allow-env --allow-net \
 # Add deno to path
 export PATH="/Users/username/.deno/bin:$PATH"
 
-# Run locally
-deployctl run --watch --no-check server.ts
+# Run backend
+apg deployctl run --watch --no-check server.ts
+
+# Run frontend 
+cd frontend && yarn start
 ```
 
 ## Frontend
@@ -34,6 +39,8 @@ This is how we bring in React.
 
 # Deploy to production
 
-1. Push to master
-2. Wait a few seconds
-3. It's live.
+1. Run `cd frontend && yarn build`
+2. Commit your built changes
+3. Push to master
+4. Wait a few seconds
+5. It's live.
