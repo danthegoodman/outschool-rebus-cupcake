@@ -2,14 +2,30 @@ import {handlePublicFile} from "./server/public-files.ts";
 import {textResponse} from "./server/util.ts";
 import {handleRebusList} from "./server/rebus-db.ts";
 import {initEmojiMapping} from "./server/emoji-mapping.ts";
+import {
+  handleAuthRedirect, handleLogout,
+  handleRequestNeedingAuth,
+  hasAuth
+} from "./server/google-auth.ts";
 
 async function handleRequest(request: Request){
-  const {pathname} = new URL(request.url);
-  switch (pathname) {
+  const url = new URL(request.url);
+  // non-authed routes
+  switch (url.pathname) {
+    case '/favicon.ico': return new Response(null, {status:404});
+    case '/logout': return handleLogout();
+    case '/api/auth_redirect': return handleAuthRedirect(url);
+  }
+
+  if(!await hasAuth(request)){
+    return handleRequestNeedingAuth(url)
+  }
+
+  // authed routes
+  switch (url.pathname) {
     case '/': return handlePublicFile('/index.html');
     case '/api/rebus-list': return handleRebusList();
-    case '/favicon.ico': return new Response(null, {status:404});
-    default: return handlePublicFile(pathname);
+    default: return handlePublicFile(url.pathname);
   }
 }
 

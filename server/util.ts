@@ -10,3 +10,16 @@ export function jsonResponse(content: any){
     headers: {"Content-Type": 'application/json'},
   });
 }
+
+export function htmlResponse(content: string){
+  return new Response(content, {
+    headers: {"Content-Type": 'text/html'},
+  });
+}
+
+export function redirectResponse(location: string | URL){
+  return new Response(null, {
+    headers: {"Location": location.toString()},
+    status: 302,
+  });
+}
