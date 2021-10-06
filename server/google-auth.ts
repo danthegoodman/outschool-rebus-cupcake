@@ -1,6 +1,7 @@
 import * as JWT from "https://deno.land/x/djwt@v2.2/mod.ts"
 import {htmlResponse, redirectResponse, textResponse} from "./util.ts";
 import {
+  isDevelopment,
   isProduction,
   JWT_SECRET,
   OAUTH_CLIENT_ID,
@@ -12,7 +13,10 @@ export async function hasAuth(req: Request){
   try {
     await getAuth(req);
     return true;
-  } catch {
+  } catch (error){
+    if(isDevelopment){
+      console.log(req.method, req.url, "No auth:", error.message);
+    }
     return false;
   }
 }
@@ -20,7 +24,7 @@ export async function hasAuth(req: Request){
 export async function getAuth(req: Request){
   const cookies = req.headers.get('Cookie')?.split('; ');
   const jwt = cookies?.find(it=> it.startsWith('JWT='))?.split('=')[1];
-  if(!jwt) throw new Error("Invalid Auth");
+  if(!jwt) throw new Error("Missing JWT Token");
 
   return await JWT.verify(jwt, JWT_SECRET, ALGORITHM)
 }
@@ -33,17 +37,28 @@ export function handleRequestNeedingAuth(reqUrl: URL){
   url.searchParams.set('redirect_uri', reqUrl.origin + '/api/auth_redirect');
   url.searchParams.set('response_type', 'code');
   url.searchParams.set('scope', 'email');
+  url.searchParams.set('prompt', 'select_account');
   return redirectResponse(url)
 }
 
 export function handleLogout(){
-  new Response(null, {
+  return new Response(null, {
     headers: {
       'Set-Cookie': buildSetCookieHeader('gone', 'remove'),
       Location: '/'
     },
     status: 302,
   });
+}
+
+export function handleAuthenticated(){
+  return htmlResponse(`<!DOCTYPE html>
+<html lang="en">
+<body>
+<script>window.location.replace('/');</script>
+<p>Click <a href="/">here</a> to proceed if your browser doesn't automatically redirect you</p>
+</body>
+</html>`)
 }
 
 export async function handleAuthRedirect(url: URL){
@@ -90,7 +105,7 @@ export async function handleAuthRedirect(url: URL){
   return new Response(null, {
     headers: {
       'Set-Cookie': buildSetCookieHeader(jwt, 'add'),
-      Location: '/foo'
+      Location: '/authenticated',
     },
     status: 302,
   });

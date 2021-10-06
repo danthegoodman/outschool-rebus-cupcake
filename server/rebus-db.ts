@@ -1,4 +1,4 @@
-import {jsonResponse} from "./util.ts";
+import {jsonResponse, textResponse} from "./util.ts";
 import {getEmojiUrl} from "./emoji-mapping.ts";
 import {
   DynamoDBClient,
@@ -55,6 +55,8 @@ export async function handleRebusRequest(request: Request) {
     const items = await getPuzzlesFromDynamoDB([]);
     return jsonResponse(items);
   }
+
+  return textResponse("Invalid HTTP method", 405);
 }
 
 type RebusDatum = { text: string } | { image: string; shortName: string };

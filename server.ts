@@ -3,18 +3,22 @@ import { textResponse } from "./server/util.ts";
 import { handleRebusRequest } from "./server/rebus-db.ts";
 import { initEmojiMapping } from "./server/emoji-mapping.ts";
 import {
+  handleAuthenticated,
   handleAuthRedirect,
   handleLogout,
   handleRequestNeedingAuth,
   hasAuth,
 } from "./server/google-auth.ts";
+import {isDevelopment} from "./server/constants.ts";
 
-async function handleRequest(request: Request) {
+async function handleRequest(request: Request): Promise<Response>{
   const url = new URL(request.url);
   // non-authed routes
   switch (url.pathname) {
     case "/favicon.ico":
       return new Response(null, { status: 404 });
+    case '/authenticated':
+      return handleAuthenticated();
     case "/logout":
       return handleLogout();
     case "/api/auth_redirect":
@@ -41,12 +45,22 @@ initEmojiMapping().catch((error) => {
 });
 
 addEventListener("fetch", async (event) => {
-  let resp;
+  let resp: Response;
   try {
     resp = await handleRequest(event.request);
+    if(!resp) throw new Error("No response given");
   } catch (error) {
     console.error(error);
     resp = textResponse(`ERROR: ${error.message}`, 500);
+  }
+
+  if(isDevelopment){
+    const req = event.request;
+    let message = `${req.method} ${req.url} => ${resp.status}`;
+    if(resp.headers.has('Location')){
+      message += ' ' + resp.headers.get('Location')
+    }
+    console.log(message);
   }
   event.respondWith(resp);
 });
