@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
+import {Link} from "react-router-dom";
 
-export default function RebusView() {
+export default function ManageView() {
   return (
     <div>
       <h1>Outschool Rebus Puzzles</h1>
       <RebusList />
       <RebusInput />
-      <a href="/auth/logout">Logout</a>
+      <Link to="/start">Back to Start Page</Link>
     </div>
   );
 }

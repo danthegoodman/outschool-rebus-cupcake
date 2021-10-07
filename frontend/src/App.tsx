@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-import RebusView from "./Rebus";
-import StartMenu from "./Start";
+import ManageView from "./pages/Manage";
+import StartMenu from "./pages/Start";
+import Play from "./pages/Play";
 
 export function AppRoot() {
   return (
@@ -11,7 +12,10 @@ export function AppRoot() {
           <StartMenu />
         </Route>
         <Route path="/play">
-          <RebusView />
+          <Play />
+        </Route>
+        <Route path="/manage">
+          <ManageView />
         </Route>
         <Route>
           <Redirect to="/start" />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Button, Jumbotron } from "reactstrap";
+import {Link} from "react-router-dom";
 
 export default function StartMenu() {
   return (
@@ -12,12 +13,19 @@ export default function StartMenu() {
         <hr className="my-2" />
         <p>Start a game below</p>
         <p className="lead">
-          <Button color="primary" href="/play">
+          <Button tag={Link} color="primary" to="/play">
             Play!
           </Button>
         </p>
+
+        <p>Or add/delete rebus puzzles:</p>
+        <p className="lead">
+          <Button tag={Link} color="primary" to="/manage">
+            Manage!
+          </Button>
+        </p>
       </Jumbotron>
-      <a href="/logout">Logout</a>
+      <a href="/auth/logout">Logout</a>
     </div>
   );
 }

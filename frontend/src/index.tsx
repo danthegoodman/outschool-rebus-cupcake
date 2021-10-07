@@ -5,7 +5,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import App from "./App";
 import { HashRouter as Router } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
-import {getUserData} from "./auth";
+import {getUserData} from "./util/auth";
 
 if(!getUserData()){
   window.location.assign('/auth/login');
