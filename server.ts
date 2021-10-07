@@ -1,7 +1,6 @@
 import { handlePublicFile } from "./server/public-files.ts";
 import { textResponse } from "./server/util.ts";
 import { handleRebusRequest } from "./server/rebus-db.ts";
-import { initEmojiMapping } from "./server/emoji-mapping.ts";
 import {
   handleAuthenticated,
   handleAuthRedirect,
@@ -44,10 +43,6 @@ async function handleRequest(request: Request): Promise<Response>{
       return handlePublicFile(url.pathname);
   }
 }
-
-initEmojiMapping().catch((error) => {
-  console.log("failed to load emojis", error);
-});
 
 addEventListener("fetch", async (event) => {
   let resp: Response;

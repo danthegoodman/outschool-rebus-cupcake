@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { MentionsInput, Mention } from "react-mentions";
 import { Link } from "react-router-dom";
-import { Button, Col, Jumbotron, Row } from "reactstrap";
+import { Col, Jumbotron, Row } from "reactstrap";
 import appleEmojis from "../static/emoji-apple.json";
 import customEmojis from "../static/emoji-custom.json";
 import { useGet, useDelete, usePost } from "../util/fetch";
+import { RebusPuzzle } from "../component/RebusPuzzle";
 
 export default function ManageView() {
   return (
@@ -35,65 +36,67 @@ export default function ManageView() {
   );
 }
 
-type RebusDatum = { text: string } | { image: string; shortName: string };
-
 type IRebus = {
-  key: string;
-  puzzle: RebusDatum[];
+  puzzle: string;
   solution: string;
-  contributor: string | null;
+  contributor: string;
 };
 
 function RebusList() {
-  const { data, error } = useGet<IRebus[]>("/api/rebus");
+  const {data, error} = useGet<IRebus[]>("/api/rebus");
 
   if (error) return <div>Error: {error.message ?? error}</div>;
   if (!data) return <div>Loading...</div>;
 
   return (
-    <>
-      {data.map((it) => (
-        <Rebus key={it.solution} rebus={it} />
-      ))}
-    </>
+    <table>
+      <thead>
+      <tr>
+        <th>Rebus</th>
+        <th>Solution</th>
+        <th>Owner</th>
+        <th></th>
+      </tr>
+      </thead>
+      <tbody>
+      {data.map((it) => <RebusRow key={it.puzzle} rebus={it}/>)}
+      </tbody>
+    </table>
   );
 }
 
-function Rebus({ rebus }: { rebus: IRebus }) {
-  const { del } = useDelete("/api/rebus");
+function RebusRow({rebus}: { rebus: IRebus }) {
+  const {del} = useDelete("/api/rebus");
 
   function handleDelete() {
-    del({ key: rebus.key });
+    del({puzzle: rebus.puzzle});
   }
 
-  const puzzle = rebus.puzzle.map((it, ndx) =>
-    "text" in it ? (
-      <span key={ndx}>{it.text}</span>
-    ) : (
-      <img key={ndx} src={it.image} alt={it.shortName} />
-    )
-  );
-
   return (
-    <div style={{ display: "flex", alignItems: "center" }}>
-      <p className="rebus">
-        {puzzle} = {rebus.solution}
-        <span style={{ marginLeft: "6px", fontSize: "12px", color: "gray" }}>
-          (by: {rebus.contributor ?? "unknown"})
-        </span>
-      </p>
-      <span
-        onClick={handleDelete}
-        style={{ color: "red", marginLeft: "20px", cursor: "pointer" }}
-      >
+    <tr>
+      <td>
+        <RebusPuzzle puzzle={rebus.puzzle}/>
+      </td>
+      <td>
+        {rebus.solution}
+      </td>
+      <td title={rebus.contributor}>
+        {rebus.contributor.replace('@outschool.com','')}
+      </td>
+      <td>
+        <span
+                onClick={handleDelete}
+                style={{color: "red", cursor: "pointer"}}
+              >
         X
       </span>
-    </div>
+      </td>
+    </tr>
   );
 }
 
 function RebusInput() {
-  const { post } = usePost<IRebus[]>("/api/rebus");
+  const {post} = usePost<IRebus[]>("/api/rebus");
   const [puzzle, setPuzzle] = useState("");
   const [solution, setSolution] = useState("");
 
@@ -102,7 +105,7 @@ function RebusInput() {
     newValue: string,
     newPlainTextValue: string
   ) {
-    console.log({ newValue, newPlainTextValue });
+    console.log({newValue, newPlainTextValue});
     setPuzzle(newValue);
   }
 
@@ -111,7 +114,7 @@ function RebusInput() {
   }
 
   function handleSave() {
-    post({ puzzle, solution });
+    post({puzzle, solution});
   }
 
   const appleEmojisArray = Object.keys(appleEmojis).map((key) => ({
@@ -144,7 +147,7 @@ function RebusInput() {
           ) => {
             return (
               <div>
-                <img src={suggestion.display} alt="" />
+                <img src={suggestion.display} alt=""/>
               </div>
             );
           }}
