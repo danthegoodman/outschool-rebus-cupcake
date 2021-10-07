@@ -1,21 +1,20 @@
 import {jsonResponse, textResponse} from "./util.ts";
-import {getEmojiUrl} from "./emoji-mapping.ts";
 import {ddbPut, ddbScanAll, ddbDelete} from "./dynamo.ts";
 import {getAuth} from "./google-auth.ts";
 
 const TABLE = "cupcake-2021q3-rebus-puzzles";
 
-export interface RebusPuzzleOutput {
-  key: string;
-  puzzle: RebusDatum[];
-  solution: string;
-  contributor: string | null;
-}
-
-interface RebusPuzzleInput {
+export type ClientPuzzle = {
   puzzle: string;
   solution: string;
   contributor: string;
+}
+type DynamoPuzzleKey = {
+  p: { S: string }; //puzzle
+}
+type DynamoPuzzleItem = DynamoPuzzleKey & {
+  s: { S: string }; //solution
+  c: { S: string }; //contributor
 }
 
 export async function handleRebusRequest(request: Request) {
@@ -41,10 +40,10 @@ export async function handleRebusRequest(request: Request) {
 
   if (request.method === "DELETE") {
     const body = await request.json();
-    if (!body.key) {
+    if (!body.puzzle) {
       throw new Error("key was not provided");
     }
-    await deletePuzzlesToDynamoDB(body.key);
+    await deletePuzzlesToDynamoDB(body.puzzle);
     const items = await getPuzzlesFromDynamoDB();
     return jsonResponse(items);
   }
@@ -52,64 +51,30 @@ export async function handleRebusRequest(request: Request) {
   return textResponse("Invalid HTTP method", 405);
 }
 
-type RebusDatum = { text: string } | { image: string; shortName: string };
-
-type DynamoPuzzleKey = {
-  p: { S: string }; //puzzle
-}
-type DynamoPuzzleItem = DynamoPuzzleKey & {
-  s: { S: string }; //solution
-  c: { S: string }; //contributor
-}
-
-export async function getPuzzlesFromDynamoDB(): Promise<RebusPuzzleOutput[]> {
+export async function getPuzzlesFromDynamoDB(): Promise<ClientPuzzle[]> {
   const items = await ddbScanAll<DynamoPuzzleItem>(TABLE);
-  return items.map(dynamodbToPuzzleResponse)
+  return items.map(mapDynamoPuzzle);
 }
 
-async function putPuzzlesToDynamoDB(item: RebusPuzzleInput) {
-  await ddbPut<DynamoPuzzleItem>(TABLE, {
-    p: {S: item.puzzle},
-    s: {S: item.solution},
-    c: {S: item.contributor},
-  })
+async function putPuzzlesToDynamoDB(item: ClientPuzzle) {
+  await ddbPut<DynamoPuzzleItem>(TABLE, mapClientPuzzle(item))
 }
 
 async function deletePuzzlesToDynamoDB(puzzle: string) {
   await ddbDelete<DynamoPuzzleKey>(TABLE, {p: {S: puzzle}});
 }
 
-function dynamodbToPuzzleResponse(item: DynamoPuzzleItem): RebusPuzzleOutput {
+function mapDynamoPuzzle(it: DynamoPuzzleItem):ClientPuzzle{
   return {
-    key: item.p.S,
-    puzzle: parseRebus(item.p.S ?? ""),
-    solution: item.s.S,
-    contributor: item.c.S ?? null,
-  };
+    puzzle: it.p.S,
+    solution: it.s.S,
+    contributor: it.c.S,
+  }
 }
-
-export function parseRebus(puzzle: string): RebusDatum[] {
-  let items: RebusDatum[] = [];
-
-  const regex = /:([^:]+):/g;
-  let lastEnd = 0;
-  while (true) {
-    const match = regex.exec(puzzle);
-    if (!match) break;
-
-    const shortName = match[1];
-    const image = getEmojiUrl(shortName);
-    if (!image) continue;
-
-    if (match.index !== lastEnd) {
-      items.push({text: puzzle.slice(lastEnd, match.index)});
-    }
-    items.push({image, shortName})
-    lastEnd = regex.lastIndex;
+function mapClientPuzzle(it: ClientPuzzle): DynamoPuzzleItem{
+  return {
+    p: {S: it.puzzle},
+    s: {S: it.solution},
+    c: {S: it.contributor},
   }
-  if (lastEnd !== puzzle.length) {
-    items.push({text: puzzle.slice(lastEnd)});
-  }
-
-  return items;
 }
