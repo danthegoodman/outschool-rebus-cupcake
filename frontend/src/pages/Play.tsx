@@ -25,5 +25,5 @@ function PlayGame(props: {gameId: string}){
 
   if(error) return <div>{error.message ?? error}</div>
   if(!data) return <div>Loading...</div>;
-  return <pre>{JSON.stringify(data, null,2)}</pre>
+  return <pre>gameData={JSON.stringify(data, null,2)}</pre>
 }
