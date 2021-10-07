@@ -92,6 +92,7 @@ function RebusTable({
 
           <th>Hint</th>
           {!!onDelete && <th>Owner</th>}
+          <th/>
         </tr>
       </thead>
       <tbody>
