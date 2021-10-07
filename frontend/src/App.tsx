@@ -11,7 +11,7 @@ export function AppRoot() {
         <Route path="/start">
           <StartMenu />
         </Route>
-        <Route path="/play">
+        <Route path="/play/:gameId?">
           <Play />
         </Route>
         <Route path="/manage">
