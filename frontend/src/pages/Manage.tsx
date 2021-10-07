@@ -168,7 +168,13 @@ function RebusRow({
           </span>
         )}
       </td>
-      <td>{canEdit && <Button onClick={handleClick}>Edit</Button>}</td>
+      <td>
+        {canEdit && (
+          <Button className="btn-blurple" onClick={handleClick}>
+            Edit
+          </Button>
+        )}
+      </td>
     </tr>
   );
 }
