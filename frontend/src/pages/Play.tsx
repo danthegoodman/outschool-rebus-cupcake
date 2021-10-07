@@ -1,11 +1,20 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Link, Redirect, useParams } from "react-router-dom";
-import { Button, Col, Input, Jumbotron, Row, Table } from "reactstrap";
+import {
+  Col,
+  Input,
+  Jumbotron,
+  Modal,
+  ModalHeader,
+  Row,
+  Table,
+} from "reactstrap";
 import { RebusPuzzle } from "../component/RebusPuzzle";
 import useFetch from "use-http";
 import { useAutosave } from "react-autosave";
 import devtools from "devtools-detect";
 import { RebusProgress } from "../component/RebusProgress";
+
 export default function PlayPage() {
   const { gameId } = useParams<{ gameId?: string }>();
   if (!gameId) {
@@ -54,13 +63,15 @@ type GameData = {
 };
 function PlayGame(props: { gameId: string }) {
   const [guesses, setGuesses] = useState<string[]>([]);
-  const { get, post, data, loading, error } = useFetch<GameData>(
+  const { get, post, data, error } = useFetch<GameData>(
     `/api/game?id=${encodeURIComponent(props.gameId)}`
   );
   const [hackingDetected, setHackingDetected] = useState(false);
+  const [showYouWonModal, setShowYouWonModal] = useState(false);
+  const [dismissYouWon, setDismissYouWon] = useState(false);
 
   const doSave = useCallback(
-    async (flushedGuesses: string[]) => {
+    (flushedGuesses: string[]) => {
       if (!flushedGuesses.length) return;
       if (JSON.stringify(data?.guesses) === JSON.stringify(flushedGuesses))
         return;
@@ -88,9 +99,11 @@ function PlayGame(props: { gameId: string }) {
     },
     [post, data]
   );
+
   useEffect(() => {
     get();
   }, []);
+
   useEffect(() => {
     if (!data) return;
     if (IS_DEVMODE) {
@@ -104,22 +117,44 @@ function PlayGame(props: { gameId: string }) {
   }, [data, doMarkHacker]);
 
   useEffect(() => {
-    let fn = (event: any) => {
+    const fn = (event: any) => {
       if (event.detail.isOpen) {
         doMarkHacker();
       }
     };
-    window.addEventListener("devtoolschange", fn);
+    globalThis.addEventListener("devtoolschange", fn);
     return () => {
-      window.removeEventListener("devtoolschange", fn);
+      globalThis.removeEventListener("devtoolschange", fn);
     };
   }, [data, doMarkHacker]);
+
+  const isAllCorrect = useMemo(() => {
+    const totalCorrect = data?.solutions.reduce((t, c, i) => {
+      const guess = guesses[i];
+      if (guess?.toLowerCase() === c.toLowerCase()) {
+        return (t += 1);
+      }
+      return t;
+    }, 0);
+    return totalCorrect === data?.solutions.length ?? 0;
+  }, [guesses, data]);
+
+  useEffect(() => {
+    if (isAllCorrect && !dismissYouWon) {
+      setShowYouWonModal(true);
+    }
+  }, [isAllCorrect, dismissYouWon]);
+
+  function handleDismissYouWon() {
+    setShowYouWonModal(false);
+    setDismissYouWon(true);
+  }
 
   if (hackingDetected) {
     return (
       <div>
         <p>
-          <img src="/mrresetti.png" />
+          <img src="/mrresetti.png" alt="" />
         </p>
         <p>NO! YOU CANNOT USE THE DEVTOOLS HERE! YOUR GAME IS NULL AND VOID.</p>
       </div>
@@ -142,6 +177,13 @@ function PlayGame(props: { gameId: string }) {
         </thead>
         <tbody>{data.puzzles.map((it, ndx) => renderRow(ndx))}</tbody>
       </Table>
+      <Modal size="xl" isOpen={showYouWonModal} toggle={handleDismissYouWon}>
+        <ModalHeader toggle={handleDismissYouWon}>You Won!</ModalHeader>
+        <img
+          alt="You won!"
+          src="https://media.giphy.com/media/3oz8xAFtqoOUUrsh7W/giphy.gif"
+        />
+      </Modal>
     </div>
   );
 
