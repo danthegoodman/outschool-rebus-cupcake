@@ -6,7 +6,7 @@ export default function RebusView() {
       <h1>Outschool Rebus Puzzles</h1>
       <RebusList />
       <RebusInput />
-      <a href="/logout">Logout</a>
+      <a href="/auth/logout">Logout</a>
     </div>
   );
 }
@@ -17,6 +17,7 @@ type IRebus = {
   key: string;
   puzzle: RebusDatum[];
   solution: string;
+  contributor: string | null;
 };
 
 function RebusList() {
@@ -53,6 +54,9 @@ function Rebus({ rebus }: { rebus: IRebus }) {
     <div style={{ display: "flex", alignItems: "center" }}>
       <p className="rebus">
         {puzzle} = {rebus.solution}
+        <span style={{marginLeft: "6px", fontSize: "12px", color: 'gray'}}>
+          (by: {rebus.contributor ?? "unknown"})
+        </span>
       </p>
       <span
         onClick={handleDelete}
