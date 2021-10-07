@@ -8,6 +8,7 @@ export type ClientPuzzle = {
   puzzle: string;
   solution: string;
   contributor: string;
+  hint: string;
 }
 type DynamoPuzzleKey = {
   p: { S: string }; //puzzle
@@ -15,6 +16,7 @@ type DynamoPuzzleKey = {
 type DynamoPuzzleItem = DynamoPuzzleKey & {
   s: { S: string }; //solution
   c: { S: string }; //contributor
+  h: { S: string }; //hint
 }
 
 export async function handleRebusRequest(request: Request) {
@@ -24,15 +26,16 @@ export async function handleRebusRequest(request: Request) {
   }
 
   if (request.method === "POST") {
-    const body = await request.json();
-    if (!body.puzzle || !body.solution) {
-      throw new Error("puzzle or solution was not provided");
+    const body:ClientPuzzle = await request.json();
+    if (!body.puzzle || !body.solution || !body.hint) {
+      throw new Error("puzzle or solution or hint was not provided");
     }
     const {email} = await getAuth(request);
     await putPuzzlesToDynamoDB({
       puzzle: body.puzzle,
       solution: body.solution,
-      contributor: email,
+      hint: body.hint,
+      contributor: email
     });
     const items = await getPuzzlesFromDynamoDB();
     return jsonResponse(items);
@@ -69,6 +72,7 @@ function mapDynamoPuzzle(it: DynamoPuzzleItem):ClientPuzzle{
     puzzle: it.p.S,
     solution: it.s.S,
     contributor: it.c.S,
+    hint: it.h.S,
   }
 }
 function mapClientPuzzle(it: ClientPuzzle): DynamoPuzzleItem{
@@ -76,5 +80,6 @@ function mapClientPuzzle(it: ClientPuzzle): DynamoPuzzleItem{
     p: {S: it.puzzle},
     s: {S: it.solution},
     c: {S: it.contributor},
+    h: {S: it.hint},
   }
 }
