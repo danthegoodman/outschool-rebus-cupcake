@@ -24,7 +24,9 @@ export default function ManageView() {
       <Row className="py-4 mx-2 mt-4" xs={2}>
         <Col xs={2} />
         <Col className="px-4 mx-2 text-center" xs={8}>
-          <h1>Outschool Rebus Puzzles: Management</h1>
+          <h1 className="bg-blurple text-white rounded py-3">
+            Outschool Rebus Puzzles: Management
+          </h1>
         </Col>
         <Col xs={2} />
       </Row>
@@ -99,7 +101,6 @@ function RebusJumbotron() {
         onDelete={handleDelete}
         onSelect={handleSelect}
       />
-      <hr />
       <RedusEditModal
         open={isModalOpen}
         onClose={handleCloseModal}
@@ -181,19 +182,21 @@ function RebusRow({
 
   return (
     <tr>
-      <td>
+      <td className="align-middle p-1">
         <RebusPuzzle puzzle={rebus.puzzle} />
       </td>
-      <td>{rebus.solution}</td>
-      <td>{rebus.hint ? rebus.hint : "No hints!"}</td>
+      <td className="align-middle px-2">{rebus.solution}</td>
+      <td className="align-middle px-2">
+        {rebus.hint ? rebus.hint : "No hints!"}
+      </td>
       {showContributor && (
-        <td title={rebus.contributor}>
+        <td className="align-middle px-2" title={rebus.contributor}>
           {rebus.contributor.replace("@outschool.com", "")}
         </td>
       )}
       {!hideControls && (
         <>
-          <td>
+          <td className="align-middle px-2">
             {canEdit && (
               <span
                 onClick={handleDelete}
@@ -203,7 +206,7 @@ function RebusRow({
               </span>
             )}
           </td>
-          <td>
+          <td className="align-middle px-2">
             {canEdit && (
               <Button className="btn-blurple" onClick={handleClick}>
                 Edit
