@@ -6,7 +6,7 @@ export function AppRoot() {
       <h1>Outschool Rebus Puzzles</h1>
       <RebusList />
       <RebusInput />
-      <a href="/logout">Logout</a>
+      <a href="/auth/logout">Logout</a>
     </div>
   );
 }

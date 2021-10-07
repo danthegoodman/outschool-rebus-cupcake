@@ -17,16 +17,18 @@ async function handleRequest(request: Request): Promise<Response>{
   switch (url.pathname) {
     case "/favicon.ico":
       return new Response(null, { status: 404 });
-    case '/authenticated':
+    case '/auth/complete':
       return handleAuthenticated();
-    case "/logout":
+    case "/auth/logout":
       return handleLogout();
-    case "/api/auth_redirect":
+    case "/auth/login":
+      return handleRequestNeedingAuth(request, url);
+    case "/auth/redirect":
       return handleAuthRedirect(url);
   }
 
   if (!(await hasAuth(request))) {
-    return handleRequestNeedingAuth(url);
+    return handleRequestNeedingAuth(request, url);
   }
 
   // authed routes
