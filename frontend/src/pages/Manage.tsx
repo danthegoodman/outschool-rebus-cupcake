@@ -50,10 +50,11 @@ type IRebus = {
 function RebusJumbotron() {
   const [data, setData] = useState<IRebus[]>([]);
   const { get, post, del, error } = useFetch<IRebus[]>("/api/rebus");
+  const [selectedPuzzle, setSeletectedPuzzle] = useState<IRebus | null>(null);
 
   useEffect(() => {
     get().then(setData);
-  }, []);
+  }, [get]);
 
   function handleDelete(rebus: IRebus) {
     del({ puzzle: rebus.puzzle });
@@ -63,25 +64,37 @@ function RebusJumbotron() {
     post(rebus);
     setData((prev) => [...prev, rebus]);
   }
+  function handleSelect(rebus: IRebus) {
+    setSeletectedPuzzle(rebus);
+  }
 
   if (error) return <div>Error: {error.message ?? error}</div>;
   if (!data.length) return <div>Loading...</div>;
 
   return (
     <Jumbotron className="m-4 p-4 bg-mango rounded">
-      <RebusTable puzzles={data} onDelete={handleDelete} />
+      <RebusTable
+        puzzles={data}
+        showContributor
+        onDelete={handleDelete}
+        onSelect={handleSelect}
+      />
       <hr />
-      <RebusInput onUpdate={handleUpdate} />
+      <RebusInput onUpdate={handleUpdate} selected={selectedPuzzle} />
     </Jumbotron>
   );
 }
 
 function RebusTable({
   puzzles,
+  showContributor,
   onDelete,
+  onSelect,
 }: {
   puzzles: IRebus[];
+  showContributor?: boolean;
   onDelete?: (rebus: IRebus) => void;
+  onSelect?: (rebus: IRebus) => void;
 }) {
   return (
     <Table>
@@ -91,13 +104,20 @@ function RebusTable({
           <th>Solution</th>
 
           <th>Hint</th>
-          {!!onDelete && <th>Owner</th>}
-          <th/>
+          {showContributor && <th>Owner</th>}
+          <th />
+          <th />
         </tr>
       </thead>
       <tbody>
         {puzzles.map((it) => (
-          <RebusRow key={it.puzzle} rebus={it} onDelete={onDelete} />
+          <RebusRow
+            key={it.puzzle}
+            rebus={it}
+            showContributor={showContributor}
+            onDelete={onDelete}
+            onSelect={onSelect}
+          />
         ))}
       </tbody>
     </Table>
@@ -106,20 +126,24 @@ function RebusTable({
 
 function RebusRow({
   rebus,
+  showContributor,
   onDelete,
+  onSelect,
 }: {
   rebus: IRebus;
+  showContributor?: boolean;
   onDelete?: (rebus: IRebus) => void;
+  onSelect?: (rebus: IRebus) => void;
 }) {
   function handleDelete() {
     onDelete && onDelete(rebus);
   }
 
-  const delCell = rebus.contributor === getUserData().email && (
-    <span onClick={handleDelete} style={{ color: "red", cursor: "pointer" }}>
-      X
-    </span>
-  )
+  function handleClick() {
+    onSelect && onSelect(rebus);
+  }
+
+  const canEdit = rebus.contributor === getUserData().email;
 
   return (
     <tr>
@@ -128,23 +152,45 @@ function RebusRow({
       </td>
       <td>{rebus.solution}</td>
       <td>{rebus.hint ? rebus.hint : "No hints!"}</td>
-      {onDelete && (
-        <>
-          <td title={rebus.contributor}>
-            {rebus.contributor.replace("@outschool.com", "")}
-          </td>
-          <td>{delCell}</td>
-        </>
+      {showContributor && (
+        <td title={rebus.contributor}>
+          {rebus.contributor.replace("@outschool.com", "")}
+        </td>
       )}
+      <td>
+        {canEdit && (
+          <span
+            onClick={handleDelete}
+            style={{ color: "red", cursor: "pointer" }}
+          >
+            X
+          </span>
+        )}
+      </td>
+      <td>{canEdit && <Button onClick={handleClick}>Edit</Button>}</td>
     </tr>
   );
 }
 
-function RebusInput(props: { onUpdate: (r: IRebus) => void }) {
+function RebusInput({
+  selected,
+  onUpdate,
+}: {
+  selected: IRebus | null;
+  onUpdate: (r: IRebus) => void;
+}) {
   const [puzzle, setPuzzle] = useState("");
   const [solution, setSolution] = useState("");
   const [hint, setHint] = useState("");
   const contributor = getUserData().email;
+
+  useEffect(() => {
+    if (selected) {
+      setPuzzle(selected.puzzle);
+      setSolution(selected.solution);
+      setHint(selected.hint);
+    }
+  }, [selected]);
 
   function handlePuzzleChange(e: React.SyntheticEvent<HTMLInputElement>) {
     setPuzzle(e.currentTarget.value);
@@ -160,7 +206,7 @@ function RebusInput(props: { onUpdate: (r: IRebus) => void }) {
 
   function handleSave() {
     if (!solution || !hint || !puzzle) return;
-    props.onUpdate({ puzzle, solution, hint, contributor });
+    onUpdate({ puzzle, solution, hint, contributor });
     setPuzzle("");
     setSolution("");
     setHint("");
