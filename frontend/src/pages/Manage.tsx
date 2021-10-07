@@ -62,6 +62,7 @@ function RebusJumbotron() {
   }
   function handleUpdate(rebus: IRebus) {
     post(rebus);
+    setSeletectedPuzzle(null);
     setData((prev) => [...prev, rebus]);
   }
   function handleSelect(rebus: IRebus) {
@@ -189,6 +190,10 @@ function RebusInput({
       setPuzzle(selected.puzzle);
       setSolution(selected.solution);
       setHint(selected.hint);
+    } else {
+      setPuzzle("");
+      setSolution("");
+      setHint("");
     }
   }, [selected]);
 
@@ -226,7 +231,11 @@ function RebusInput({
       >
         <FormGroup>
           <Label>Puzzle</Label>
-          <Input value={puzzle} onChange={handlePuzzleChange} />
+          <Input
+            value={puzzle}
+            onChange={handlePuzzleChange}
+            disabled={!!selected}
+          />
         </FormGroup>
         <div
           style={{
