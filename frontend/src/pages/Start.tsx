@@ -43,7 +43,7 @@ export default function StartMenu() {
         </Col>
       </Row>
       <Row className="py-4 mx-2">
-        <Col className="px-4 mx-3 float-sm-right" xs={2}>
+        <Col className="px-4 mx-2 float-sm-right" xs={2}>
           <Button className="btn-blurple" href="/auth/logout">
             Logout
           </Button>
