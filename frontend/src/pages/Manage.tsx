@@ -9,7 +9,7 @@ import { useGet, useDelete, usePost } from "../util/fetch";
 export default function ManageView() {
   return (
     <>
-      <Row className="py-4 mx-2" xs={2}>
+      <Row className="py-4 mx-2 mt-4" xs={2}>
         <Col xs={2} />
         <Col className="px-4 mx-2 text-center" xs={8}>
           <h1>Outschool Rebus Puzzles: Management</h1>
@@ -24,9 +24,11 @@ export default function ManageView() {
           </Jumbotron>
         </Col>
       </Row>
-      <Row>
-        <Col>
-          <Link to="/start">Back to Start Page</Link>
+      <Row className="py-4 mx-2">
+        <Col className="px-4 mx-2">
+          <Link className="btn btn-secondary" to="/start">
+            Back to Start Page
+          </Link>
         </Col>
       </Row>
     </>
