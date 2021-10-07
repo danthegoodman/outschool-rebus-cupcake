@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Button, Col, Jumbotron, Row } from "reactstrap";
 import { Link } from "react-router-dom";
-import navyLogo from "../img/CW-logo-2021-NAVY.png";
+import { Boombox } from "../component/Boombox";
 
 export default function StartMenu() {
   return (
@@ -9,11 +9,7 @@ export default function StartMenu() {
       <Row className="py-4 mx-2" xs={3}>
         <Col xs={4} />
         <Col className="px-4 mx-2" xs={4}>
-          <img
-            className="img-fluid"
-            src={navyLogo}
-            alt="Cupcake Week 2021 boombox logo"
-          />
+          <Boombox />
         </Col>
         <Col xs={4} />
       </Row>

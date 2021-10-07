@@ -11,4 +11,4 @@ curl -s "${apple_src}/emoji.json" \
     )
   | flatten
   | from_entries
- ' > public/emoji-apple.json
+ ' > frontend/src/static/emoji-apple.json
