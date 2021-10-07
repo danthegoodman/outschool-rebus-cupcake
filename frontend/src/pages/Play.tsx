@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, Redirect, useParams } from "react-router-dom";
-import { Button, Col, Jumbotron, Row, Table } from "reactstrap";
+import { Button, Col, Input, Jumbotron, Row, Table } from "reactstrap";
 import { RebusPuzzle } from "../component/RebusPuzzle";
 import useFetch from "use-http";
 import { useAutosave } from "react-autosave";
@@ -15,8 +15,10 @@ export default function PlayPage() {
     <>
       <Row className="py-4 mx-2 mt-4" xs={2}>
         <Col xs={2} />
-        <Col className="px-4 mx-2 text-center " xs={8}>
-          <h1 className="blurple">Outschool Rebus Puzzles: Play!</h1>
+        <Col className="px-5 mx-2 text-center " xs={8}>
+          <h1 className="bg-blurple text-white rounded py-3">
+            Outschool Rebus Puzzles: Play!
+          </h1>
         </Col>
         <Col xs={2} />
       </Row>
@@ -128,7 +130,7 @@ function PlayGame(props: { gameId: string }) {
 
   //TODO loading image when saving or when needing to save?
   return (
-    <div className="mx-2 px-2">
+    <div className="mx-2 px-2 pt-4">
       <Table>
         <thead>
           <tr>
@@ -157,21 +159,19 @@ function PlayGame(props: { gameId: string }) {
 
     return (
       <tr key={puzzle}>
-        <td className="align-middle">
-          <div className="bg-rebus rounded p-1">
-            <RebusPuzzle puzzle={puzzle} />
-          </div>
+        <td className="align-middle p-1">
+          <RebusPuzzle puzzle={puzzle} />
         </td>
         <td className="align-middle">
-          <input
-            className="p-1"
+          <Input
+            className="pr-5"
             value={guess}
             onInput={handleInput}
             style={{ backgroundColor }}
           />
         </td>
-        <td className="align-middle">
-          <p className="p-1">{hint}</p>
+        <td className="align-middle px-2">
+          <p>{hint}</p>
         </td>
       </tr>
     );
