@@ -5,18 +5,21 @@ import "bootstrap/dist/css/bootstrap.css";
 import App from "./App";
 import { HashRouter as Router } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
-import {getUserData} from "./util/auth";
+import { getUserData } from "./util/auth";
+import { Container } from "reactstrap";
 
-if(!getUserData()){
-  window.location.assign('/auth/login');
+if (!getUserData()) {
+  window.location.assign("/auth/login");
 } else {
   ReactDOM.render(
     <React.StrictMode>
-      <Router>
-        <App />
-      </Router>
+      <Container fluid className="bg-teal mh-100">
+        <Router>
+          <App />
+        </Router>
+      </Container>
     </React.StrictMode>,
-    document.getElementById('root')
+    document.getElementById("root")
   );
 }
 

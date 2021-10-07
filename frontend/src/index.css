@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #00ffdc;
 }
 
 code {
@@ -34,6 +35,14 @@ code {
   background-color: #ffb93a;
 }
 
+.secondary {
+  background-color: #ffb93a;
+}
+
 .bg-blurple {
+  background-color: #6e51fd;
+}
+
+.primary {
   background-color: #6e51fd;
 }
