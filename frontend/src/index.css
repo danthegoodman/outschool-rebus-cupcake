@@ -48,6 +48,11 @@ code {
   border-color: #6e51fd !important;
 }
 
+.progress .progress-bar {
+  background-color: #6e51fd !important;
+  border-color: #6e51fd !important;
+}
+
 .primary {
   background-color: #6e51fd;
 }

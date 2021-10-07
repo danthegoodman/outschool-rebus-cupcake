@@ -49,5 +49,5 @@ export function RebusProgress({
     );
   }, [inputLetterCount, solutionLetterCount, justSolutionLetterCount]);
 
-  return <Progress value={totalScore} />;
+  return <Progress animated value={totalScore} />;
 }
