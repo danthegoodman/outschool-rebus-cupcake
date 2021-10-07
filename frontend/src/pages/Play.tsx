@@ -46,6 +46,7 @@ type GameData = {
   puzzles: string[];
   solutions: string[];
   guesses: string[];
+  hints: string[];
   hacker: boolean;
 };
 function PlayGame(props: { gameId: string }) {

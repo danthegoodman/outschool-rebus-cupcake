@@ -28,6 +28,7 @@ type DynamoGameItem =  DynamoGameKey & {
   p: {L:Array<{S:string}>} // puzzles
   s: {L:Array<{S:string}>} // solutions
   g: {L:Array<{S:string}>} // guesses
+  n: {L:Array<{S:string}>} // hiNts
   h: {S: string} // hacker
 }
 type ClientGame = {
@@ -36,6 +37,7 @@ type ClientGame = {
   puzzles: string[];
   solutions: string[];
   guesses: string[];
+  hints: string[];
   hacker: boolean;
 }
 
@@ -69,6 +71,7 @@ async function createNewGame(email: string, id: string){
     id,
     puzzles: puzzles.map(it=>it.puzzle),
     solutions: puzzles.map(it=>it.solution),
+    hints: puzzles.map(it=>it.hint),
     guesses: puzzles.map(()=>""),
     hacker: false,
   })
@@ -84,6 +87,7 @@ function mapDynamoGame(item: DynamoGameItem): ClientGame{
     puzzles: item.p.L.map(mapStr),
     guesses: item.g.L.map(mapStr),
     solutions: item.s.L.map(mapStr),
+    hints: item.n.L.map(mapStr),
     hacker: item.h.S === "1",
   }
 }
@@ -95,6 +99,7 @@ function mapClientGame(item: ClientGame): DynamoGameItem{
     p: {L: item.puzzles.map(mapStr)},
     g: {L: item.guesses.map(mapStr)},
     s: {L: item.solutions.map(mapStr)},
+    n: {L: item.hints.map(mapStr)},
     h: {S: item.hacker ? "1" : ""},
   }
 }
