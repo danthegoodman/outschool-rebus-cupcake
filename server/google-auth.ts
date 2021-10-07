@@ -21,12 +21,17 @@ export async function hasAuth(req: Request){
   }
 }
 
-export async function getAuth(req: Request){
+export interface UserAuth {
+  email: string;
+}
+export async function getAuth(req: Request): Promise<UserAuth>{
   const cookies = req.headers.get('Cookie')?.split('; ');
   const jwt = cookies?.find(it=> it.startsWith('JWT='))?.split('=')[1];
   if(!jwt) throw new Error("Missing JWT Token");
 
-  return await JWT.verify(jwt, JWT_SECRET, ALGORITHM)
+  const result = await JWT.verify(jwt, JWT_SECRET, ALGORITHM);
+  if(typeof result.email !== "string") throw new Error("JWT is missing email");
+  return {email: result.email};
 }
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
