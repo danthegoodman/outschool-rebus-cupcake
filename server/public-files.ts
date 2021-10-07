@@ -1,18 +1,18 @@
 import { textResponse } from "./util.ts";
 import { isDevelopment } from "./constants.ts";
 
-const cache = new Map<string, string>();
+const cache = new Map<string, Uint8Array>();
 
 export async function handlePublicFile(pathname: string) {
   try {
     let content;
     if(isDevelopment){
-      content = await Deno.readTextFile("public" + pathname);
+      content = await Deno.readFile("public" + pathname);
     } else {
       if(cache.has(pathname)){
         content = cache.get(pathname);
       } else {
-        content = await Deno.readTextFile("public" + pathname);
+        content = await Deno.readFile("public" + pathname);
         cache.set(pathname, content);
       }
     }
@@ -37,6 +37,8 @@ function assumeContentType(pathname: string) {
       return "application/javascript";
     case "json":
       return "application/json";
+    case "png":
+      return "image/png";
     case "css":
       return "text/css";
   }

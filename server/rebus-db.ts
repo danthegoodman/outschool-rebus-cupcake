@@ -5,7 +5,7 @@ import {getAuth} from "./google-auth.ts";
 
 const TABLE = "cupcake-2021q3-rebus-puzzles";
 
-interface RebusPuzzleOutput {
+export interface RebusPuzzleOutput {
   key: string;
   puzzle: RebusDatum[];
   solution: string;

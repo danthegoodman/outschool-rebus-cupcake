@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Jumbotron } from "reactstrap";
+import React, {useState, useEffect, useCallback} from "react";
+import {Button, Jumbotron} from "reactstrap";
 import {Link, Redirect, useParams} from "react-router-dom";
 import {RebusPuzzle} from "../component/RebusPuzzle";
-
+import useFetch from "use-http";
+import {useAutosave} from "react-autosave"
+import devtools from "devtools-detect";
 export default function PlayPage() {
   const {gameId} = useParams<{gameId?: string}>();
   if(!gameId){
@@ -19,45 +21,118 @@ export default function PlayPage() {
     </div>
   );
 }
+const IS_DEVMODE = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 
 type GameData = {
   id: string;
   email: string;
   puzzles: string[];
+  solutions: string[];
   guesses: string[];
+  hacker: boolean;
 }
 function PlayGame(props: {gameId: string}){
-  const {data, error, post} = useFetchGame(props.gameId);
+  const [guesses, setGuesses] = useState<string[]>([]);
+  const {get, post, data, loading, error} = useFetch<GameData>(`/api/game?id=${encodeURIComponent(props.gameId)}`);
+  const [hackingDetected, setHackingDetected] = useState(false);
+
+  const doSave = useCallback(async (flushedGuesses: string[])=>{
+    if(!flushedGuesses.length) return;
+    if(JSON.stringify(data?.guesses) === JSON.stringify(flushedGuesses)) return;
+
+    const newData = {...data};
+    newData.guesses = flushedGuesses;
+    return post(newData);
+  }, [post, data])
+  useAutosave({data: guesses, onSave: doSave, interval: 3000})
+
+  const doMarkHacker = useCallback((arg?: boolean)=>{
+    if (!arg && IS_DEVMODE) {
+      console.log("you would have been marked a hacker, but this is development. You can call DO_MARK_HACKER from here to trigger this anyway.")
+      return
+    }
+    setHackingDetected(true);
+    const newData = {...data};
+    newData.hacker = true;
+    post(newData)
+  }, [post, data]);
+  useEffect(() => { get() }, [])
+  useEffect(()=>{
+    if(!data) return
+    if(IS_DEVMODE){
+      (window as any).DO_MARK_HACKER = ()=> doMarkHacker(true);
+    }
+    setGuesses(data.guesses);
+    setHackingDetected(data.hacker);
+    if(!data.hacker && devtools.isOpen){
+      doMarkHacker();
+    }
+  }, [data, doMarkHacker])
+
+  useEffect(()=> {
+    let fn = (event: any) => {
+      if(event.detail.isOpen){
+        doMarkHacker();
+      }
+    }
+    window.addEventListener('devtoolschange', fn);
+    return ()=> {
+      window.removeEventListener('devtoolschange', fn);
+    }
+  }, [data, doMarkHacker])
+
+
+  if(hackingDetected){
+    return (
+      <div>
+        <p><img src="/mrresetti.png"/></p>
+        <p>NO! YOU CANNOT USE THE DEVTOOLS HERE! YOUR GAME IS NULL AND VOID.</p>
+      </div>
+    );
+  }
 
   if(error) return <div>{error.message ?? error}</div>
   if(!data) return <div>Loading...</div>;
 
+  //TODO loading image when saving or when needing to save?
   return (
     <div>
-      {data.puzzles.map(it=> <RebusPuzzle key={it} puzzle={it}/>)}
-      <pre>gameData={JSON.stringify(data, null,2)}</pre>
+      <table>
+        <thead>
+        <tr>
+          <th>Rebus</th>
+          <th>Your Guess</th>
+        </tr>
+        </thead>
+        <tbody>
+        {data.puzzles.map((it,ndx)=> renderRow(ndx))}
+        </tbody>
+      </table>
     </div>
   );
-}
 
-function useFetchGame(gameId: string) {
-  const [error, setError] = useState<Error | null>(null);
-  const [data, setData] = useState<GameData | undefined>(undefined);
+  function renderRow(index: number){
+    const puzzle = data?.puzzles[index] ?? "";
+    const guess = guesses?.[index] ?? "";
+    const soln = data?.solutions[index] ?? "";
 
-  useEffect(() => {
-    fetch(`/api/game?id=${encodeURIComponent(gameId)}`)
-      .then((res) => res.json())
-      .then(setData, setError);
-  }, [gameId]);
+    const backgroundColor =
+      soln.toLowerCase() === guess.toLowerCase()
+      ? "#0F0"
+      : "#F44";
 
-  const post = useCallback(
-    (data: GameData) => {
-      fetch(`/api/game?id=${encodeURIComponent(gameId)}`, { method: "POST", body: JSON.stringify(data) })
-        .then((res) => res.json())
-        .then(setData, setError);
-    },
-    [gameId]
-  );
-
-  return { data, error, post } as const;
+    return (
+      <tr key={puzzle}>
+        <td><RebusPuzzle puzzle={puzzle}/></td>
+        <td><input value={guess} onInput={handleInput} style={{backgroundColor}}/></td>
+      </tr>
+    )
+    function handleInput(e: any){
+      setGuesses(prev=>{
+        const next = [...prev];
+        next[index] = e.target.value;
+        return next;
+      })
+    }
+  }
 }
