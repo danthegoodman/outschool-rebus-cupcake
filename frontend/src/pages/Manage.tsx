@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import {
   Col,
@@ -10,8 +10,9 @@ import {
   Label,
   Table,
 } from "reactstrap";
-import { useGet, useDelete, usePost } from "../util/fetch";
+import useFetch from "use-http";
 import { RebusPuzzle } from "../component/RebusPuzzle";
+import {getUserData} from "../util/auth";
 
 export default function ManageView() {
   return (
@@ -25,11 +26,7 @@ export default function ManageView() {
       </Row>
       <Row className="py-2 mx-2">
         <Col>
-          <Jumbotron className="m-4 p-4 bg-mango rounded">
-            <RebusList />
-            <hr />
-            <RebusInput />
-          </Jumbotron>
+          <RebusJumbotron />
         </Col>
       </Row>
       <Row className="py-4 mx-2">
@@ -46,22 +43,37 @@ export default function ManageView() {
 type IRebus = {
   puzzle: string;
   solution: string;
-  hint?: string;
+  hint: string;
   contributor: string;
 };
 
-function RebusList() {
-  const { data, error } = useGet<IRebus[]>("/api/rebus");
-  const { del } = useDelete("/api/rebus");
+function RebusJumbotron() {
+  const [data, setData] = useState<IRebus[]>([]);
+  const { get, post, del, error } = useFetch<IRebus[]>("/api/rebus");
+
+  useEffect(()=>{
+    get().then(setData);
+  }, [])
 
   function handleDelete(rebus: IRebus) {
     del({ puzzle: rebus.puzzle });
+    setData(prev=> prev.filter(it=> it.puzzle !== rebus.puzzle))
+  }
+  function handleUpdate(rebus: IRebus){
+    post(rebus)
+    setData(prev=> [...prev, rebus]);
   }
 
   if (error) return <div>Error: {error.message ?? error}</div>;
-  if (!data) return <div>Loading...</div>;
+  if (!data.length) return <div>Loading...</div>;
 
-  return <RebusTable puzzles={data} onDelete={handleDelete} />;
+  return (
+    <Jumbotron className="m-4 p-4 bg-mango rounded">
+      <RebusTable puzzles={data} onDelete={handleDelete} />
+      <hr />
+      <RebusInput onUpdate={handleUpdate}/>
+    </Jumbotron>
+  )
 }
 
 function RebusTable({
@@ -128,11 +140,11 @@ function RebusRow({
   );
 }
 
-function RebusInput() {
-  const { post } = usePost<IRebus[]>("/api/rebus");
+function RebusInput(props: { onUpdate: (r: IRebus) => void }) {
   const [puzzle, setPuzzle] = useState("");
   const [solution, setSolution] = useState("");
   const [hint, setHint] = useState("");
+  const contributor = getUserData().email;
 
   function handlePuzzleChange(e: React.SyntheticEvent<HTMLInputElement>) {
     setPuzzle(e.currentTarget.value);
@@ -147,14 +159,18 @@ function RebusInput() {
   }
 
   function handleSave() {
-    post({ puzzle, solution, hint });
+    if (!solution || !hint || !puzzle) return;
+    props.onUpdate({ puzzle, solution, hint, contributor });
+    setPuzzle("");
+    setSolution("");
+    setHint("");
   }
 
   return (
     <div>
       {(puzzle.length > 0 || solution.length > 0) && (
         <RebusTable
-          puzzles={[{ puzzle, solution, hint, contributor: "you!" }]}
+          puzzles={[{ puzzle, solution, hint, contributor }]}
         />
       )}
       <div
