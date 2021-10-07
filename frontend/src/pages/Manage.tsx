@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Col,
@@ -12,7 +12,7 @@ import {
 } from "reactstrap";
 import useFetch from "use-http";
 import { RebusPuzzle } from "../component/RebusPuzzle";
-import {getUserData} from "../util/auth";
+import { getUserData } from "../util/auth";
 
 export default function ManageView() {
   return (
@@ -31,7 +31,7 @@ export default function ManageView() {
       </Row>
       <Row className="py-4 mx-2">
         <Col className="px-4 mx-2">
-          <Link className="btn btn-secondary" to="/start">
+          <Link className="btn btn-blurple" to="/start">
             Back to Start Page
           </Link>
         </Col>
@@ -51,17 +51,17 @@ function RebusJumbotron() {
   const [data, setData] = useState<IRebus[]>([]);
   const { get, post, del, error } = useFetch<IRebus[]>("/api/rebus");
 
-  useEffect(()=>{
+  useEffect(() => {
     get().then(setData);
-  }, [])
+  }, []);
 
   function handleDelete(rebus: IRebus) {
     del({ puzzle: rebus.puzzle });
-    setData(prev=> prev.filter(it=> it.puzzle !== rebus.puzzle))
+    setData((prev) => prev.filter((it) => it.puzzle !== rebus.puzzle));
   }
-  function handleUpdate(rebus: IRebus){
-    post(rebus)
-    setData(prev=> [...prev, rebus]);
+  function handleUpdate(rebus: IRebus) {
+    post(rebus);
+    setData((prev) => [...prev, rebus]);
   }
 
   if (error) return <div>Error: {error.message ?? error}</div>;
@@ -71,9 +71,9 @@ function RebusJumbotron() {
     <Jumbotron className="m-4 p-4 bg-mango rounded">
       <RebusTable puzzles={data} onDelete={handleDelete} />
       <hr />
-      <RebusInput onUpdate={handleUpdate}/>
+      <RebusInput onUpdate={handleUpdate} />
     </Jumbotron>
-  )
+  );
 }
 
 function RebusTable({
@@ -169,9 +169,7 @@ function RebusInput(props: { onUpdate: (r: IRebus) => void }) {
   return (
     <div>
       {(puzzle.length > 0 || solution.length > 0) && (
-        <RebusTable
-          puzzles={[{ puzzle, solution, hint, contributor }]}
-        />
+        <RebusTable puzzles={[{ puzzle, solution, hint, contributor }]} />
       )}
       <div
         style={{
@@ -211,6 +209,7 @@ function RebusInput(props: { onUpdate: (r: IRebus) => void }) {
           />
         </FormGroup>
         <Button
+          className="btn-blurple"
           style={{ marginTop: "auto", marginLeft: "20px" }}
           onClick={handleSave}
         >

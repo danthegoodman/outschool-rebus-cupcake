@@ -28,14 +28,14 @@ export default function StartMenu() {
             <hr className="my-2" />
             <p>Start a game below</p>
             <p className="lead">
-              <Button tag={Link} color="primary" to="/play">
+              <Button tag={Link} color="blurple" to="/play">
                 Play!
               </Button>
             </p>
 
             <p>Or add/delete rebus puzzles:</p>
             <p className="lead">
-              <Button tag={Link} color="primary" to="/manage">
+              <Button tag={Link} color="blurple" to="/manage">
                 Manage!
               </Button>
             </p>

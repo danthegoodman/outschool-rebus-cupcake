@@ -29,7 +29,7 @@ export default function PlayPage() {
       </Row>
       <Row className="py-4 mx-2">
         <Col className="px-4 mx-2">
-          <Link className="btn btn-secondary" to="/start">
+          <Link className="btn btn-blurple" to="/start">
             Back to Start Page
           </Link>
         </Col>
