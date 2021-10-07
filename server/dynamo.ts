@@ -2,7 +2,8 @@ import {
   DynamoDBClient,
   ScanCommand,
   PutItemCommand,
-  DeleteItemCommand
+  DeleteItemCommand,
+  GetItemCommand
 } from "https://cdn.skypack.dev/@aws-sdk/client-dynamodb@3.20.0?dts";
 
 const client = new DynamoDBClient({
@@ -33,6 +34,17 @@ export async function ddbScanAll<T>(table: string): Promise<T[]>{
   }
 
   return tailRecursive([], undefined);
+}
+
+export async function ddbGet<K, T>(table:string, key: K): Promise<T | null> {
+  const resp = await client.send(
+    new GetItemCommand({
+      TableName: table,
+      Key: key,
+      ConsistentRead: true,
+    })
+  )
+  return resp.Item ?? null;
 }
 
 export async function ddbPut<T>(table: string, item: T) {

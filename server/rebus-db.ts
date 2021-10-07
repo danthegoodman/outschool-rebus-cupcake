@@ -62,7 +62,7 @@ type DynamoPuzzleItem = DynamoPuzzleKey & {
   c: { S: string }; //contributor
 }
 
-async function getPuzzlesFromDynamoDB(): Promise<RebusPuzzleOutput[]> {
+export async function getPuzzlesFromDynamoDB(): Promise<RebusPuzzleOutput[]> {
   const items = await ddbScanAll<DynamoPuzzleItem>(TABLE);
   return items.map(dynamodbToPuzzleResponse)
 }
