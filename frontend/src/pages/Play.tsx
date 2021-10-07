@@ -37,7 +37,6 @@ function PlayGame(props: {gameId: string}){
   const [hackingDetected, setHackingDetected] = useState(false);
 
   const doSave = useCallback(async (flushedGuesses: string[])=>{
-    console.log(data?.guesses, flushedGuesses);
     if(!flushedGuesses.length) return;
     if(JSON.stringify(data?.guesses) === JSON.stringify(flushedGuesses)) return;
 

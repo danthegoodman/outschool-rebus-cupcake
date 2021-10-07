@@ -78,7 +78,6 @@ async function createNewGame(email: string, id: string){
 
 function mapDynamoGame(item: DynamoGameItem): ClientGame{
   let mapStr = (it: {S:string})=> it.S;
-  console.log(item);
   return {
     email: item.e.S,
     id: item.i.S,
