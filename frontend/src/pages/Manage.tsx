@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {Link} from "react-router-dom";
+import { MentionsInput, Mention } from "react-mentions";
+import { Link } from "react-router-dom";
+import appleEmojis from "../static/emoji-apple.json";
+import customEmojis from "../static/emoji-custom.json";
 
 export default function ManageView() {
   return (
@@ -55,7 +58,7 @@ function Rebus({ rebus }: { rebus: IRebus }) {
     <div style={{ display: "flex", alignItems: "center" }}>
       <p className="rebus">
         {puzzle} = {rebus.solution}
-        <span style={{marginLeft: "6px", fontSize: "12px", color: 'gray'}}>
+        <span style={{ marginLeft: "6px", fontSize: "12px", color: "gray" }}>
           (by: {rebus.contributor ?? "unknown"})
         </span>
       </p>
@@ -74,8 +77,13 @@ function RebusInput() {
   const [puzzle, setPuzzle] = useState("");
   const [solution, setSolution] = useState("");
 
-  function handlePuzzleChange(e: React.SyntheticEvent<HTMLInputElement>) {
-    setPuzzle(e.currentTarget.value);
+  function handlePuzzleChange(
+    _e: unknown,
+    newValue: string,
+    newPlainTextValue: string
+  ) {
+    console.log({ newValue, newPlainTextValue });
+    setPuzzle(newValue);
   }
 
   function handleSolutionChange(e: React.SyntheticEvent<HTMLInputElement>) {
@@ -86,13 +94,42 @@ function RebusInput() {
     post({ puzzle, solution });
   }
 
+  const appleEmojisArray = Object.keys(appleEmojis).map((key) => ({
+    id: key,
+    // @ts-ignore json loading stuff
+    display: appleEmojis[key],
+  }));
+  const customEmojisArray = Object.keys(customEmojis).map((key) => ({
+    id: key,
+    // @ts-ignore json loading stuff
+    display: customEmojis[key],
+  }));
+
+  const allEmojis = [...appleEmojisArray, ...customEmojisArray];
+
   return (
     <div>
-      <input
-        value={puzzle}
-        onChange={handlePuzzleChange}
-        placeholder=":teapot::clover:"
-      />
+      <MentionsInput value={puzzle} onChange={handlePuzzleChange}>
+        <Mention
+          trigger=":"
+          markup="[__display__](__id__)"
+          data={allEmojis}
+          appendSpaceOnAdd
+          renderSuggestion={(
+            suggestion,
+            search,
+            highlightedDisplay,
+            index,
+            focused
+          ) => {
+            return (
+              <div>
+                <img src={suggestion.display} alt="" />
+              </div>
+            );
+          }}
+        />
+      </MentionsInput>
       <input
         value={solution}
         onChange={handleSolutionChange}
