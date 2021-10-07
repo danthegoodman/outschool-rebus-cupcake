@@ -1,7 +1,7 @@
 import {jsonResponse, textResponse} from "./util.ts";
 import {getAuth} from "./google-auth.ts";
 import {ddbGet, ddbPut} from "./dynamo.ts";
-import {getPuzzlesFromDynamoDB, RebusPuzzleOutput} from "./rebus-db.ts";
+import {getPuzzlesFromDynamoDB, ClientPuzzle} from "./rebus-db.ts";
 import {shuffle} from "https://cdn.skypack.dev/lodash-es@^4.17.15";
 
 export async function handleGameRequest(request: Request, url: URL) {
@@ -62,12 +62,12 @@ async function handleGamePostRequest(req: Request, id: string){
 
 async function createNewGame(email: string, id: string){
   const allPuzzles = await getPuzzlesFromDynamoDB();
-  const puzzles:RebusPuzzleOutput[] = shuffle(allPuzzles).slice(0, 10);
+  const puzzles:ClientPuzzle[] = shuffle(allPuzzles).slice(0, 10);
 
   let ddbGame = mapClientGame({
     email,
     id,
-    puzzles: puzzles.map(it=>it.key),
+    puzzles: puzzles.map(it=>it.puzzle),
     solutions: puzzles.map(it=>it.solution),
     guesses: puzzles.map(()=>""),
     hacker: false,
