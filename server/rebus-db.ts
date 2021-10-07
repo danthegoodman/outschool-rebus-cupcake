@@ -37,8 +37,7 @@ export async function handleRebusRequest(request: Request) {
       hint: body.hint,
       contributor: email
     });
-    const items = await getPuzzlesFromDynamoDB();
-    return jsonResponse(items);
+    return jsonResponse({ok:1});
   }
 
   if (request.method === "DELETE") {
@@ -47,8 +46,7 @@ export async function handleRebusRequest(request: Request) {
       throw new Error("key was not provided");
     }
     await deletePuzzlesToDynamoDB(body.puzzle);
-    const items = await getPuzzlesFromDynamoDB();
-    return jsonResponse(items);
+    return jsonResponse({ok:1});
   }
 
   return textResponse("Invalid HTTP method", 405);
