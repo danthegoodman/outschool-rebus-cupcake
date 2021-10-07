@@ -158,17 +158,20 @@ function PlayGame(props: { gameId: string }) {
     return (
       <tr key={puzzle}>
         <td className="align-middle">
-          <RebusPuzzle puzzle={puzzle} />
+          <div className="bg-rebus rounded p-1">
+            <RebusPuzzle puzzle={puzzle} />
+          </div>
         </td>
         <td className="align-middle">
           <input
+            className="p-1"
             value={guess}
             onInput={handleInput}
             style={{ backgroundColor }}
           />
         </td>
         <td className="align-middle">
-          <p>{hint}</p>
+          <p className="p-1">{hint}</p>
         </td>
       </tr>
     );
