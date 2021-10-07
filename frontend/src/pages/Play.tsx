@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, Redirect, useParams } from "react-router-dom";
-import { Button, Col, Jumbotron, Row } from "reactstrap";
+import { Button, Col, Jumbotron, Row, Table } from "reactstrap";
 import { RebusPuzzle } from "../component/RebusPuzzle";
 import useFetch from "use-http";
 import { useAutosave } from "react-autosave";
@@ -20,7 +20,7 @@ export default function PlayPage() {
         </Col>
         <Col xs={2} />
       </Row>
-      <Row className="py-4 mx-2">
+      <Row className="py-2 mx-2">
         <Col>
           <Jumbotron className="m-4 p-4 bg-mango rounded">
             <PlayGame gameId={gameId} />
@@ -128,7 +128,7 @@ function PlayGame(props: { gameId: string }) {
   //TODO loading image when saving or when needing to save?
   return (
     <div className="mx-2 px-2">
-      <table>
+      <Table>
         <thead>
           <tr>
             <th>Rebus</th>
@@ -136,7 +136,7 @@ function PlayGame(props: { gameId: string }) {
           </tr>
         </thead>
         <tbody>{data.puzzles.map((it, ndx) => renderRow(ndx))}</tbody>
-      </table>
+      </Table>
     </div>
   );
 
@@ -154,10 +154,10 @@ function PlayGame(props: { gameId: string }) {
 
     return (
       <tr key={puzzle}>
-        <td>
+        <td className="align-middle">
           <RebusPuzzle puzzle={puzzle} />
         </td>
-        <td>
+        <td className="align-middle">
           <input
             value={guess}
             onInput={handleInput}

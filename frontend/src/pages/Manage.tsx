@@ -17,7 +17,7 @@ export default function ManageView() {
         </Col>
         <Col xs={2} />
       </Row>
-      <Row className="py-4 mx-2">
+      <Row className="py-2 mx-2">
         <Col>
           <Jumbotron className="m-4 p-4 bg-mango rounded">
             <RebusList />
@@ -43,7 +43,7 @@ type IRebus = {
 };
 
 function RebusList() {
-  const {data, error} = useGet<IRebus[]>("/api/rebus");
+  const { data, error } = useGet<IRebus[]>("/api/rebus");
 
   if (error) return <div>Error: {error.message ?? error}</div>;
   if (!data) return <div>Loading...</div>;
@@ -51,52 +51,52 @@ function RebusList() {
   return (
     <table>
       <thead>
-      <tr>
-        <th>Rebus</th>
-        <th>Solution</th>
-        <th>Owner</th>
-        <th></th>
-      </tr>
+        <tr>
+          <th>Rebus</th>
+          <th>Solution</th>
+          <th>Owner</th>
+          <th></th>
+        </tr>
       </thead>
       <tbody>
-      {data.map((it) => <RebusRow key={it.puzzle} rebus={it}/>)}
+        {data.map((it) => (
+          <RebusRow key={it.puzzle} rebus={it} />
+        ))}
       </tbody>
     </table>
   );
 }
 
-function RebusRow({rebus}: { rebus: IRebus }) {
-  const {del} = useDelete("/api/rebus");
+function RebusRow({ rebus }: { rebus: IRebus }) {
+  const { del } = useDelete("/api/rebus");
 
   function handleDelete() {
-    del({puzzle: rebus.puzzle});
+    del({ puzzle: rebus.puzzle });
   }
 
   return (
     <tr>
       <td>
-        <RebusPuzzle puzzle={rebus.puzzle}/>
+        <RebusPuzzle puzzle={rebus.puzzle} />
       </td>
-      <td>
-        {rebus.solution}
-      </td>
+      <td>{rebus.solution}</td>
       <td title={rebus.contributor}>
-        {rebus.contributor.replace('@outschool.com','')}
+        {rebus.contributor.replace("@outschool.com", "")}
       </td>
       <td>
         <span
-                onClick={handleDelete}
-                style={{color: "red", cursor: "pointer"}}
-              >
-        X
-      </span>
+          onClick={handleDelete}
+          style={{ color: "red", cursor: "pointer" }}
+        >
+          X
+        </span>
       </td>
     </tr>
   );
 }
 
 function RebusInput() {
-  const {post} = usePost<IRebus[]>("/api/rebus");
+  const { post } = usePost<IRebus[]>("/api/rebus");
   const [puzzle, setPuzzle] = useState("");
   const [solution, setSolution] = useState("");
 
@@ -105,7 +105,7 @@ function RebusInput() {
     newValue: string,
     newPlainTextValue: string
   ) {
-    console.log({newValue, newPlainTextValue});
+    console.log({ newValue, newPlainTextValue });
     setPuzzle(newValue);
   }
 
@@ -114,7 +114,7 @@ function RebusInput() {
   }
 
   function handleSave() {
-    post({puzzle, solution});
+    post({ puzzle, solution });
   }
 
   const appleEmojisArray = Object.keys(appleEmojis).map((key) => ({
@@ -147,7 +147,7 @@ function RebusInput() {
           ) => {
             return (
               <div>
-                <img src={suggestion.display} alt=""/>
+                <img src={suggestion.display} alt="" />
               </div>
             );
           }}
