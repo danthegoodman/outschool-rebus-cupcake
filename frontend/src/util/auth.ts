@@ -1,4 +1,9 @@
-export function getUserData(): {email: string, picture: string} {
+export type UserData = {email:string, picture: string};
+let userData: UserData | undefined;
+
+export function getUserData(): UserData {
+  if(userData) return userData;
+
   const cookies = document.cookie?.split('; ');
   const jwtCookie = cookies.find(it => it.startsWith('JWT='));
 
@@ -7,5 +12,6 @@ export function getUserData(): {email: string, picture: string} {
   if(!jwtCookie) return null as any
 
   const {email, picture} = JSON.parse(atob(jwtCookie.split('.')[1]));
-  return {email, picture};
+  userData = {email, picture};
+  return userData;
 }
