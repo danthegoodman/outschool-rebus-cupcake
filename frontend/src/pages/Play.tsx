@@ -5,6 +5,7 @@ import { RebusPuzzle } from "../component/RebusPuzzle";
 import useFetch from "use-http";
 import { useAutosave } from "react-autosave";
 import devtools from "devtools-detect";
+import { RebusProgress } from "../component/RebusProgress";
 export default function PlayPage() {
   const { gameId } = useParams<{ gameId?: string }>();
   if (!gameId) {
@@ -169,6 +170,7 @@ function PlayGame(props: { gameId: string }) {
             onInput={handleInput}
             style={{ backgroundColor }}
           />
+          <RebusProgress input={guess} solution={soln} />
         </td>
         <td className="align-middle px-2">
           <p>{hint}</p>
