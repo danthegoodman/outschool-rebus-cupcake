@@ -6,6 +6,7 @@ import {
   PutItemCommand,
   DeleteItemCommand,
 } from "https://cdn.skypack.dev/@aws-sdk/client-dynamodb@3.20.0?dts";
+import {getAuth} from "./google-auth.ts";
 
 const client = new DynamoDBClient({
   region: "us-east-1",
@@ -20,11 +21,13 @@ interface RebusPuzzleOutput {
   key: string;
   puzzle: RebusDatum[];
   solution: string;
+  contributor: string | null;
 }
 
 interface RebusPuzzleInput {
   puzzle: string;
   solution: string;
+  contributor: string;
 }
 
 export async function handleRebusRequest(request: Request) {
@@ -38,9 +41,11 @@ export async function handleRebusRequest(request: Request) {
     if (!body.puzzle || !body.solution) {
       throw new Error("puzzle or solution was not provided");
     }
+    const {email} = await getAuth(request);
     await putPuzzlesToDynamoDB({
       puzzle: body.puzzle,
       solution: body.solution,
+      contributor: email,
     });
     const items = await getPuzzlesFromDynamoDB([]);
     return jsonResponse(items);
@@ -87,6 +92,7 @@ async function putPuzzlesToDynamoDB(item: RebusPuzzleInput) {
       Item: {
         p: { S: item.puzzle },
         s: { S: item.solution },
+        c: { S: item.contributor },
       },
     })
   );
@@ -108,6 +114,7 @@ function dynamodbToPuzzleResponse(item: any): RebusPuzzleOutput {
     key: item.p.S,
     puzzle: parseRebus(item.p.S ?? ""),
     solution: item.s.S,
+    contributor: item.c?.S ?? null,
   };
 }
 

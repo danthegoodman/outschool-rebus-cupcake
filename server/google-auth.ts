@@ -21,24 +21,33 @@ export async function hasAuth(req: Request){
   }
 }
 
-export async function getAuth(req: Request){
+export interface UserAuth {
+  email: string;
+}
+export async function getAuth(req: Request): Promise<UserAuth>{
   const cookies = req.headers.get('Cookie')?.split('; ');
   const jwt = cookies?.find(it=> it.startsWith('JWT='))?.split('=')[1];
   if(!jwt) throw new Error("Missing JWT Token");
 
-  return await JWT.verify(jwt, JWT_SECRET, ALGORITHM)
+  const result = await JWT.verify(jwt, JWT_SECRET, ALGORITHM);
+  if(typeof result.email !== "string") throw new Error("JWT is missing email");
+  return {email: result.email};
 }
 
 const THIRTY_DAYS = 60 * 60 * 24 * 30;
 
-export function handleRequestNeedingAuth(reqUrl: URL){
-  const url = new URL('https://accounts.google.com/o/oauth2/v2/auth')
-  url.searchParams.set('client_id', OAUTH_CLIENT_ID);
-  url.searchParams.set('redirect_uri', reqUrl.origin + '/api/auth_redirect');
-  url.searchParams.set('response_type', 'code');
-  url.searchParams.set('scope', 'email');
-  url.searchParams.set('prompt', 'select_account');
-  return redirectResponse(url)
+export function handleRequestNeedingAuth(req: Request, url: URL){
+  const targ = new URL('https://accounts.google.com/o/oauth2/v2/auth')
+  targ.searchParams.set('client_id', OAUTH_CLIENT_ID);
+  targ.searchParams.set('redirect_uri', url.origin + '/auth/redirect');
+  targ.searchParams.set('response_type', 'code');
+  targ.searchParams.set('scope', 'email');
+  targ.searchParams.set('prompt', 'select_account');
+  let xFwd = req.headers.get('x-forwarded-host');
+  if(xFwd){
+    targ.searchParams.set('state', `xfwd=${xFwd}`)
+  }
+  return redirectResponse(targ)
 }
 
 export function handleLogout(){
@@ -64,6 +73,16 @@ export function handleAuthenticated(){
 export async function handleAuthRedirect(url: URL){
   const code = url.searchParams.get('code');
   if(!code) return textResponse("Missing ?code", 400);
+
+  if(isDevelopment){
+    const [,xFwdHost] = url.searchParams.get('state')?.match(/xfwd=(.+)/) ?? [];
+    if(xFwdHost){
+      const next = new URL(url);
+      next.host = xFwdHost;
+      next.searchParams.delete('state');
+      return redirectResponse(next);
+    }
+  }
 
   const tokenResp = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
@@ -105,7 +124,7 @@ export async function handleAuthRedirect(url: URL){
   return new Response(null, {
     headers: {
       'Set-Cookie': buildSetCookieHeader(jwt, 'add'),
-      Location: '/authenticated',
+      Location: '/auth/complete',
     },
     status: 302,
   });
@@ -135,7 +154,7 @@ function badEmailResponse(email: string) {
 <h1>Access Denied</h1>
 <p>This app is only available to users with @outschool.com emails.</p>
 <p>Your email: <code>${email}</code></p>
-<p><a href="/logout">Logout</a></p>
+<p><a href="/auth/logout">Logout</a></p>
 </body>
 </html>`);
 }
