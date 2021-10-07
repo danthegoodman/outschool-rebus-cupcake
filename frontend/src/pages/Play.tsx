@@ -134,6 +134,7 @@ function PlayGame(props: { gameId: string }) {
           <tr>
             <th>Rebus</th>
             <th>Your Guess</th>
+            <th>Hint</th>
           </tr>
         </thead>
         <tbody>{data.puzzles.map((it, ndx) => renderRow(ndx))}</tbody>
@@ -145,6 +146,7 @@ function PlayGame(props: { gameId: string }) {
     const puzzle = data?.puzzles[index] ?? "";
     const guess = guesses?.[index] ?? "";
     const soln = data?.solutions[index] ?? "";
+    const hint = data?.hints?.[index] ?? "";
 
     const backgroundColor =
       guess.length === 0
@@ -164,6 +166,9 @@ function PlayGame(props: { gameId: string }) {
             onInput={handleInput}
             style={{ backgroundColor }}
           />
+        </td>
+        <td className="align-middle">
+          <p>{hint}</p>
         </td>
       </tr>
     );

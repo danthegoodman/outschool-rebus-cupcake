@@ -45,8 +45,8 @@ code {
 
 .btn-blurple {
   color: #fff;
-  background-color: #6e51fd;
-  border-color: #6e51fd;
+  background-color: #6e51fd !important;
+  border-color: #6e51fd !important;
 }
 
 .primary {
