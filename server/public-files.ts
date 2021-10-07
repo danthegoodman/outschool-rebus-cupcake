@@ -35,6 +35,8 @@ function assumeContentType(pathname: string) {
       return "text/html; charset=utf-8";
     case "js":
       return "application/javascript";
+    case "json":
+      return "application/json";
     case "css":
       return "text/css";
   }
