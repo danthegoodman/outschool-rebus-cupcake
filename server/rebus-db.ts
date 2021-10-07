@@ -1,21 +1,9 @@
 import {jsonResponse, textResponse} from "./util.ts";
 import {getEmojiUrl} from "./emoji-mapping.ts";
-import {
-  DynamoDBClient,
-  ScanCommand,
-  PutItemCommand,
-  DeleteItemCommand,
-} from "https://cdn.skypack.dev/@aws-sdk/client-dynamodb@3.20.0?dts";
+import {ddbPut, ddbScanAll, ddbDelete} from "./dynamo.ts";
 import {getAuth} from "./google-auth.ts";
 
-const client = new DynamoDBClient({
-  region: "us-east-1",
-  credentials: {
-    accessKeyId: Deno.env.get("AWS_ACCESS_KEY_ID"),
-    secretAccessKey: Deno.env.get("AWS_SECRET_ACCESS_KEY"),
-    sessionToken: Deno.env.get("AWS_SESSION_TOKEN"),
-  },
-});
+const TABLE = "cupcake-2021q3-rebus-puzzles";
 
 interface RebusPuzzleOutput {
   key: string;
@@ -32,7 +20,7 @@ interface RebusPuzzleInput {
 
 export async function handleRebusRequest(request: Request) {
   if (request.method === "GET") {
-    const items = await getPuzzlesFromDynamoDB([]);
+    const items = await getPuzzlesFromDynamoDB();
     return jsonResponse(items);
   }
 
@@ -47,7 +35,7 @@ export async function handleRebusRequest(request: Request) {
       solution: body.solution,
       contributor: email,
     });
-    const items = await getPuzzlesFromDynamoDB([]);
+    const items = await getPuzzlesFromDynamoDB();
     return jsonResponse(items);
   }
 
@@ -57,7 +45,7 @@ export async function handleRebusRequest(request: Request) {
       throw new Error("key was not provided");
     }
     await deletePuzzlesToDynamoDB(body.key);
-    const items = await getPuzzlesFromDynamoDB([]);
+    const items = await getPuzzlesFromDynamoDB();
     return jsonResponse(items);
   }
 
@@ -66,55 +54,37 @@ export async function handleRebusRequest(request: Request) {
 
 type RebusDatum = { text: string } | { image: string; shortName: string };
 
-async function getPuzzlesFromDynamoDB(
-  items: any[],
-  startKey?: any
-): Promise<RebusPuzzleOutput[]> {
-  if (items.length > 0 && startKey === undefined) {
-    return items;
-  }
-  const { Items, LastEvaluatedKey } = await client.send(
-    new ScanCommand({
-      TableName: "cupcake-2021q3-rebus-puzzles",
-      ExclusiveStartKey: startKey,
-    })
-  );
+type DynamoPuzzleKey = {
+  p: { S: string }; //puzzle
+}
+type DynamoPuzzleItem = DynamoPuzzleKey & {
+  s: { S: string }; //solution
+  c: { S: string }; //contributor
+}
 
-  const newItems = Items?.map(dynamodbToPuzzleResponse) ?? [];
-
-  return getPuzzlesFromDynamoDB(newItems, LastEvaluatedKey);
+async function getPuzzlesFromDynamoDB(): Promise<RebusPuzzleOutput[]> {
+  const items = await ddbScanAll<DynamoPuzzleItem>(TABLE);
+  return items.map(dynamodbToPuzzleResponse)
 }
 
 async function putPuzzlesToDynamoDB(item: RebusPuzzleInput) {
-  await client.send(
-    new PutItemCommand({
-      TableName: "cupcake-2021q3-rebus-puzzles",
-      Item: {
-        p: { S: item.puzzle },
-        s: { S: item.solution },
-        c: { S: item.contributor },
-      },
-    })
-  );
+  await ddbPut<DynamoPuzzleItem>(TABLE, {
+    p: {S: item.puzzle},
+    s: {S: item.solution},
+    c: {S: item.contributor},
+  })
 }
 
-async function deletePuzzlesToDynamoDB(key: string) {
-  await client.send(
-    new DeleteItemCommand({
-      TableName: "cupcake-2021q3-rebus-puzzles",
-      Key: {
-        p: { S: key },
-      },
-    })
-  );
+async function deletePuzzlesToDynamoDB(puzzle: string) {
+  await ddbDelete<DynamoPuzzleKey>(TABLE, {p: {S: puzzle}});
 }
 
-function dynamodbToPuzzleResponse(item: any): RebusPuzzleOutput {
+function dynamodbToPuzzleResponse(item: DynamoPuzzleItem): RebusPuzzleOutput {
   return {
     key: item.p.S,
     puzzle: parseRebus(item.p.S ?? ""),
     solution: item.s.S,
-    contributor: item.c?.S ?? null,
+    contributor: item.c.S ?? null,
   };
 }
 
@@ -123,7 +93,7 @@ export function parseRebus(puzzle: string): RebusDatum[] {
 
   const regex = /:([^:]+):/g;
   let lastEnd = 0;
-  while(true){
+  while (true) {
     const match = regex.exec(puzzle);
     if (!match) break;
 
@@ -131,13 +101,13 @@ export function parseRebus(puzzle: string): RebusDatum[] {
     const image = getEmojiUrl(shortName);
     if (!image) continue;
 
-    if(match.index !== lastEnd){
+    if (match.index !== lastEnd) {
       items.push({text: puzzle.slice(lastEnd, match.index)});
     }
     items.push({image, shortName})
     lastEnd = regex.lastIndex;
   }
-  if(lastEnd !== puzzle.length){
+  if (lastEnd !== puzzle.length) {
     items.push({text: puzzle.slice(lastEnd)});
   }
 
