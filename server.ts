@@ -10,6 +10,7 @@ import {
   hasAuth,
 } from "./server/google-auth.ts";
 import {isDevelopment} from "./server/constants.ts";
+import {handleGameRequest} from "./server/game-db.ts";
 
 async function handleRequest(request: Request): Promise<Response>{
   const url = new URL(request.url);
@@ -37,6 +38,8 @@ async function handleRequest(request: Request): Promise<Response>{
       return handlePublicFile("/index.html");
     case "/api/rebus":
       return handleRebusRequest(request);
+    case "/api/game":
+      return handleGameRequest(request, url);
     default:
       return handlePublicFile(url.pathname);
   }
