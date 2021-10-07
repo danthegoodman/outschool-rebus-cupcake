@@ -1,18 +1,35 @@
 import React, { useState } from "react";
 import { MentionsInput, Mention } from "react-mentions";
 import { Link } from "react-router-dom";
+import { Button, Col, Jumbotron, Row } from "reactstrap";
 import appleEmojis from "../static/emoji-apple.json";
 import customEmojis from "../static/emoji-custom.json";
 import { useGet, useDelete, usePost } from "../util/fetch";
 
 export default function ManageView() {
   return (
-    <div>
-      <h1>Outschool Rebus Puzzles</h1>
-      <RebusList />
-      <RebusInput />
-      <Link to="/start">Back to Start Page</Link>
-    </div>
+    <>
+      <Row className="py-4 mx-2" xs={2}>
+        <Col xs={2} />
+        <Col className="px-4 mx-2 text-center" xs={8}>
+          <h1>Outschool Rebus Puzzles: Management</h1>
+        </Col>
+        <Col xs={2} />
+      </Row>
+      <Row className="py-4 mx-2">
+        <Col>
+          <Jumbotron className="m-4 p-4 bg-mango rounded">
+            <RebusList />
+            <RebusInput />
+          </Jumbotron>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Link to="/start">Back to Start Page</Link>
+        </Col>
+      </Row>
+    </>
   );
 }
 

@@ -1,0 +1,9 @@
+// Add your overrides here, before Bootstrap import
+$theme-colors: (
+  "teal": #00ffdc,
+  "mango": #ffb93a,
+  "blurple": #6e51fd,
+);
+
+// Bootstrap and its default variables
+@import "node_modules/bootstrap/scss/bootstrap";

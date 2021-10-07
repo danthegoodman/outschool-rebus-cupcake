@@ -8,6 +8,10 @@ body {
   background-color: #00ffdc;
 }
 
+html {
+  background-color: #00ffdc;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
@@ -35,12 +39,14 @@ code {
   background-color: #ffb93a;
 }
 
-.secondary {
-  background-color: #ffb93a;
-}
-
 .bg-blurple {
   background-color: #6e51fd;
+}
+
+.btn-blurple {
+  color: #fff;
+  background-color: #6e51fd;
+  border-color: #6e51fd;
 }
 
 .primary {

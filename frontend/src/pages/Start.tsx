@@ -6,16 +6,16 @@ import navyLogo from "../img/CW-logo-2021-NAVY.png";
 export default function StartMenu() {
   return (
     <>
-      <Row className="py-4 mx-2" xs={2}>
-        <Col xs={3} />
-        <Col className="px-4 mx-2" xs={6}>
+      <Row className="py-4 mx-2" xs={3}>
+        <Col xs={4} />
+        <Col className="px-4 mx-2" xs={4}>
           <img
             className="img-fluid"
             src={navyLogo}
             alt="Cupcake Week 2021 boombox logo"
           />
         </Col>
-        <Col xs={3} />
+        <Col xs={4} />
       </Row>
       <Row className="py-4 mx-2">
         <Col>
@@ -43,8 +43,8 @@ export default function StartMenu() {
         </Col>
       </Row>
       <Row className="py-4 mx-2">
-        <Col className="px-4 mx-2 float-sm-right" xs={2}>
-          <Button className="ghost" href="/auth/logout">
+        <Col className="px-4 mx-3 float-sm-right" xs={2}>
+          <Button className="btn-blurple" href="/auth/logout">
             Logout
           </Button>
         </Col>
