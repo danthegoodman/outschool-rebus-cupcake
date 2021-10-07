@@ -114,26 +114,25 @@ function RebusRow({
     onDelete && onDelete(rebus);
   }
 
+  const delCell = rebus.contributor === getUserData().email && (
+    <span onClick={handleDelete} style={{ color: "red", cursor: "pointer" }}>
+      X
+    </span>
+  )
+
   return (
     <tr>
       <td>
         <RebusPuzzle puzzle={rebus.puzzle} />
       </td>
       <td>{rebus.solution}</td>
-      <td title={rebus.contributor}>{rebus.hint ? rebus.hint : "No hints!"}</td>
+      <td>{rebus.hint ? rebus.hint : "No hints!"}</td>
       {onDelete && (
         <>
           <td title={rebus.contributor}>
             {rebus.contributor.replace("@outschool.com", "")}
           </td>
-          <td>
-            <span
-              onClick={handleDelete}
-              style={{ color: "red", cursor: "pointer" }}
-            >
-              X
-            </span>
-          </td>
+          <td>{delCell}</td>
         </>
       )}
     </tr>
