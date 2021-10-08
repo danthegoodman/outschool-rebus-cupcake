@@ -3,31 +3,15 @@ import emojiApple from "../static/emoji-apple.json";
 import emojiCustom from "../static/emoji-custom.json";
 
 export function RebusPuzzle({ puzzle }: { puzzle: string }) {
-  const parts = parseRebus(puzzle).map((it, ndx) =>
-    "text" in it ? (
-      <span key={ndx}>{it.text}</span>
-    ) : (
-      <img
-        className="bg-rebus rounded p-2"
-        key={ndx}
-        src={it.image}
-        alt={it.shortName}
-        title={it.shortName}
-      />
-    )
-  );
-
   return (
     <p className="rebus" title={puzzle}>
-      {parts}
+      {parseRebus(puzzle)}
     </p>
   );
 }
 
-type RebusDatum = { text: string } | { image: string; shortName: string };
-
-function parseRebus(puzzle: string): RebusDatum[] {
-  let items: RebusDatum[] = [];
+function parseRebus(puzzle: string) {
+  let items = [];
 
   const regex = /:([^:]+):/g;
   let lastEnd = 0;
@@ -36,17 +20,42 @@ function parseRebus(puzzle: string): RebusDatum[] {
     if (!match) break;
 
     const shortName = match[1];
-    const image = getEmojiUrl(shortName);
-    if (!image) continue;
+    const customImage: string | undefined = (emojiCustom as any)[shortName];
+    const appleImage: [number,number] | undefined = (emojiApple as any)[shortName];
+    if(!customImage && !appleImage) continue;
 
     if (match.index !== lastEnd) {
-      items.push({ text: puzzle.slice(lastEnd, match.index) });
+      let text = puzzle.slice(lastEnd, match.index);
+      if(text.trim()){
+        items.push(<span key={items.length}>{text}</span>);
+      }
     }
-    items.push({ image, shortName });
+    if(customImage){
+      items.push(<img
+        className="rebusImg bg-rebus rounded"
+        key={items.length}
+        src={customImage}
+        alt={shortName}
+        title={shortName}
+      />)
+    } else if(appleImage) {
+      const [x,y] = appleImage;
+
+      items.push(<span
+        className="rebusImg bg-rebus rounded"
+        key={items.length}
+        title={shortName}
+        style={{
+          backgroundImage: "url(https://unpkg.com/emoji-datasource-apple@7.0.2/img/apple/sheets-256/64.png)",
+          backgroundPosition: `${-x*66}px ${-y*66}px`,
+        }}
+      />)
+    }
     lastEnd = regex.lastIndex;
   }
-  if (lastEnd !== puzzle.length) {
-    items.push({ text: puzzle.slice(lastEnd) });
+  let finalText = puzzle.slice(lastEnd);
+  if (finalText.trim()) {
+    items.push(<span key={items.length}>{finalText}</span>);
   }
 
   return items;
