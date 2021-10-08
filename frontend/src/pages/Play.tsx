@@ -106,6 +106,7 @@ function PlayGame(props: { gameId: string }) {
 
   useEffect(() => {
     get();
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
