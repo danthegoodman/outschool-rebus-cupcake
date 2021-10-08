@@ -2,16 +2,17 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Button, Col, Jumbotron, Row } from "reactstrap";
 import { Link } from "react-router-dom";
 import { Boombox } from "../component/Boombox";
+import { SingleEmoji } from "../component/RebusPuzzle";
 
 export default function StartMenu() {
   return (
     <>
       <Row className="py-4 mx-2" xs={3}>
-        <Col xs={4} />
-        <Col className="px-4 mx-2" xs={4}>
+        <Col xs={1} md={4} />
+        <Col className="px-4 mx-2" xs={10} md={4}>
           <Boombox />
         </Col>
-        <Col xs={4} />
+        <Col xs={1} md={4} />
       </Row>
       <Row className="py-4 mx-2">
         <Col>
@@ -50,7 +51,11 @@ export default function StartMenu() {
                 className="d-flex justify-content-center align-bottom"
                 xs={2}
               >
-                <h4>✨ OR ✨</h4>
+                <h4>
+                  <SingleEmoji shortName="sparkles" />
+                  OR
+                  <SingleEmoji shortName="sparkles" />
+                </h4>
               </Col>
               <Col className="d-flex justify-content-center" xs={4}>
                 <Button tag={Link} color="blurple" to="/manage">

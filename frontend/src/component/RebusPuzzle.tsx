@@ -21,35 +21,42 @@ function parseRebus(puzzle: string) {
 
     const shortName = match[1];
     const customImage: string | undefined = (emojiCustom as any)[shortName];
-    const appleImage: [number,number] | undefined = (emojiApple as any)[shortName];
-    if(!customImage && !appleImage) continue;
+    const appleImage: [number, number] | undefined = (emojiApple as any)[
+      shortName
+    ];
+    if (!customImage && !appleImage) continue;
 
     if (match.index !== lastEnd) {
       let text = puzzle.slice(lastEnd, match.index);
-      if(text.trim()){
+      if (text.trim()) {
         items.push(<span key={items.length}>{text}</span>);
       }
     }
-    if(customImage){
-      items.push(<img
-        className="rebusImg bg-rebus rounded"
-        key={items.length}
-        src={customImage}
-        alt={shortName}
-        title={shortName}
-      />)
-    } else if(appleImage) {
-      const [x,y] = appleImage;
+    if (customImage) {
+      items.push(
+        <img
+          className="rebusImg bg-rebus rounded"
+          key={items.length}
+          src={customImage}
+          alt={shortName}
+          title={shortName}
+        />
+      );
+    } else if (appleImage) {
+      const [x, y] = appleImage;
 
-      items.push(<span
-        className="rebusImg bg-rebus rounded"
-        key={items.length}
-        title={shortName}
-        style={{
-          backgroundImage: "url(https://unpkg.com/emoji-datasource-apple@7.0.2/img/apple/sheets-256/64.png)",
-          backgroundPosition: `${-x*66}px ${-y*66}px`,
-        }}
-      />)
+      items.push(
+        <span
+          className="rebusImg bg-rebus rounded"
+          key={items.length}
+          title={shortName}
+          style={{
+            backgroundImage:
+              "url(https://unpkg.com/emoji-datasource-apple@7.0.2/img/apple/sheets-256/64.png)",
+            backgroundPosition: `${-x * 66}px ${-y * 66}px`,
+          }}
+        />
+      );
     }
     lastEnd = regex.lastIndex;
   }
@@ -64,4 +71,45 @@ function parseRebus(puzzle: string) {
 export function getEmojiUrl(shortName: string): string | undefined {
   //@ts-ignore these are lookup maps, not strongly typed json objects
   return emojiCustom[shortName] ?? emojiApple[shortName];
+}
+
+export function SingleEmoji({ shortName }: { shortName: string }): JSX.Element {
+  const customImage: string | undefined = (emojiCustom as any)[shortName];
+  const appleImage: [number, number] | undefined = (emojiApple as any)[
+    shortName
+  ];
+
+  if (customImage) {
+    return (
+      <img
+        className="iconImg  rounded"
+        src={customImage}
+        alt={shortName}
+        title={shortName}
+      />
+    );
+  } else if (appleImage) {
+    const [x, y] = appleImage;
+    return (
+      <span
+        className="iconImg  rounded"
+        title={shortName}
+        style={{
+          backgroundImage:
+            "url(https://unpkg.com/emoji-datasource-apple@7.0.2/img/apple/sheets-256/64.png)",
+          backgroundPosition: `${-x * 66}px ${-y * 66}px`,
+          scale: ".5",
+        }}
+      />
+    );
+  } else {
+    return (
+      <img
+        className="rebusImg  rounded"
+        src={(emojiCustom as any)["question_block"]}
+        alt={"question_block"}
+        title={"question_block"}
+      />
+    );
+  }
 }
