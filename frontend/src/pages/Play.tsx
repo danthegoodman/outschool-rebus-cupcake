@@ -129,6 +129,7 @@ function PlayGame(props: { gameId: string }) {
   }, [data, doMarkHacker]);
 
   const isAllCorrect = useMemo(() => {
+    if(guesses.length === 0) return false;
     const totalCorrect = data?.solutions.reduce((t, c, i) => {
       const guess = guesses[i];
       if (guess?.toLowerCase() === c.toLowerCase()) {
