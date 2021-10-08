@@ -16,31 +16,55 @@ export default function StartMenu() {
       <Row className="py-4 mx-2">
         <Col>
           <Jumbotron className="m-4 p-4 bg-mango rounded">
-            <h1>Outschool Rebus Puzzles</h1>
-            <p className="lead">
-              Challenge your friends and coworkers to some good-natured
-              competition.
-            </p>
-            <hr className="my-2" />
-            <p>Start a game below</p>
-            <p className="lead">
-              <Button tag={Link} color="blurple" to="/play">
-                Play!
-              </Button>
-            </p>
-
-            <p>Or add/delete rebus puzzles:</p>
-            <p className="lead">
-              <Button tag={Link} color="blurple" to="/manage">
-                Manage!
-              </Button>
-            </p>
+            <Row>
+              <Col>
+                <h1 className="text-white bg-blurple rounded d-flex justify-content-center py-2">
+                  Outschool Rebus Puzzles
+                </h1>
+                <h4 className="lead d-flex justify-content-center">
+                  Challenge your friends and coworkers to some good-natured
+                  competition.
+                </h4>
+                <hr className="my-2" />
+              </Col>
+            </Row>
+            <Row className="align-middle pt-3 d-flex justify-content-center">
+              <Col className="d-flex justify-content-center" xs={4}>
+                <h3>Start a game:</h3>
+              </Col>
+              <Col
+                className="d-flex justify-content-center align-bottom"
+                xs={2}
+              ></Col>
+              <Col className="d-flex justify-content-center" xs={4}>
+                <h3>Add/delete rebus puzzles:</h3>
+              </Col>
+            </Row>
+            <Row className="align-middle pt-3 mb-2 d-flex justify-content-center">
+              <Col className="d-flex justify-content-center" xs={4}>
+                <Button tag={Link} color="blurple" to="/play">
+                  Play!
+                </Button>
+              </Col>
+              <Col
+                className="d-flex justify-content-center align-bottom"
+                xs={2}
+              >
+                <h4>✨ OR ✨</h4>
+              </Col>
+              <Col className="d-flex justify-content-center" xs={4}>
+                <Button tag={Link} color="blurple" to="/manage">
+                  Manage!
+                </Button>
+              </Col>
+            </Row>
           </Jumbotron>
         </Col>
       </Row>
-      <Row className="py-4 mx-2">
-        <Col className="px-4 mx-2 float-sm-right" xs={2}>
-          <Button className="btn-blurple" href="/auth/logout">
+      <Row className="py-2 px-1">
+        <Col className="px-4 mx-2 " xs={10} />
+        <Col className="px-4 mx-2 " xs={1}>
+          <Button className="btn-blurple px-4 py-2" href="/auth/logout">
             Logout
           </Button>
         </Col>
