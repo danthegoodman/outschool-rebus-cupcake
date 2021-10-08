@@ -32,7 +32,7 @@ export default function PlayPage() {
         </Col>
         <Col xs={0} md={2} />
       </Row>
-      <Row cclassName="py-2 d-flex justify-content-center">
+      <Row className="py-2 d-flex justify-content-center">
         <Col xs={0} md={1} />
         <Col xs={12} md={10}>
           <Jumbotron className="bg-mango rounded">
@@ -133,6 +133,7 @@ function PlayGame(props: { gameId: string }) {
   }, [data, doMarkHacker]);
 
   const isAllCorrect = useMemo(() => {
+    if (!guesses || !data?.solutions) return false;
     if (guesses.length === 0) return false;
     const totalCorrect = data?.solutions.reduce((t, c, i) => {
       const guess = guesses[i];
