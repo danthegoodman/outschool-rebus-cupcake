@@ -24,27 +24,31 @@ export default function PlayPage() {
   return (
     <>
       <Row className="py-4 mx-2 mt-4" xs={2}>
-        <Col xs={2} />
-        <Col className="px-5 mx-2 text-center " xs={8}>
-          <h1 className="bg-blurple text-white display-4 rounded py-3">
+        <Col xs={0} md={2} />
+        <Col className="text-center " xs={12} md={8}>
+          <h1 className="text-white text-center display-4 bg-blurple rounded py-2">
             Outschool Rebus Puzzles: Play!
           </h1>
         </Col>
-        <Col xs={2} />
+        <Col xs={0} md={2} />
       </Row>
-      <Row className="py-2 mx-2">
-        <Col>
-          <Jumbotron className="m-4 p-4 bg-mango rounded">
+      <Row cclassName="py-2 d-flex justify-content-center">
+        <Col xs={0} md={1} />
+        <Col xs={12} md={10}>
+          <Jumbotron className="bg-mango rounded">
             <PlayGame gameId={gameId} />
           </Jumbotron>
         </Col>
+        <Col xs={0} md={1} />
       </Row>
-      <Row className="py-4 mx-2">
-        <Col className="px-4 mx-2">
+      <Row className="py-4 d-flex justify-content-start">
+        <Col xs={0} md={1} />
+        <Col className="px-4" xs={6} md={2}>
           <Link className="btn btn-blurple" to="/start">
             Back to Start Page
           </Link>
         </Col>
+        <Col xs={0} md={2} />
       </Row>
     </>
   );
@@ -167,7 +171,7 @@ function PlayGame(props: { gameId: string }) {
 
   //TODO loading image when saving or when needing to save?
   return (
-    <div className="mx-2 px-2 pt-4">
+    <div className="px-2 pt-4">
       <Table>
         <thead>
           <tr>
