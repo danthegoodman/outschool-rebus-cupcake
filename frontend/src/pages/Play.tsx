@@ -174,7 +174,7 @@ function PlayGame(props: { gameId: string }) {
   //TODO loading image when saving or when needing to save?
   return (
     <div className="px-2 pt-4">
-      <Table>
+      <Table className="responsive-table">
         <thead>
           <tr>
             <th>Rebus</th>
@@ -210,9 +210,11 @@ function PlayGame(props: { gameId: string }) {
     return (
       <tr key={puzzle}>
         <td className="align-middle p-1">
+          <div className="label">Puzzle</div>
           <RebusPuzzle puzzle={puzzle} />
         </td>
         <td className="align-middle">
+          <div className="label">Your Guess</div>
           <Input
             className="pr-5"
             value={guess}
@@ -222,6 +224,7 @@ function PlayGame(props: { gameId: string }) {
           <RebusProgress input={guess} solution={soln} />
         </td>
         <td className="align-middle px-2">
+          <div className="label">Hint</div>
           <p>{hint}</p>
         </td>
       </tr>

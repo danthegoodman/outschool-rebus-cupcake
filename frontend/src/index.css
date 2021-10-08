@@ -71,3 +71,38 @@ code {
 .bg-rebus {
   background-color: rgba(0, 0, 0, 0.15);
 }
+
+.responsive-table div.label {
+  display: none;
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+@media only screen and (max-width: 600px) {
+  .responsive-table tr {
+    display: block;
+  }
+  .responsive-table th {
+    display: none;
+  }
+  .responsive-table tbody tr {
+    border-bottom-width: 1px;
+    box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+  }
+
+  .responsive-table td {
+    display: block;
+    border-bottom-width: 0;
+    box-shadow: none;
+  }
+
+  .responsive-table.table > :not(caption) > * > * {
+    box-shadow: none;
+    border-bottom-width: 0;
+    background-color: transparent;
+  }
+
+  .responsive-table div.label {
+    display: block;
+  }
+}
