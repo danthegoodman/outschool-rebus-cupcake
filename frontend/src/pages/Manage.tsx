@@ -24,7 +24,7 @@ export default function ManageView() {
       <Row className="py-4 mx-2 mt-4" xs={2}>
         <Col xs={2} />
         <Col className="px-4 mx-2 text-center" xs={8}>
-          <h1 className="bg-blurple text-white rounded py-3">
+          <h1 className="bg-blurple text-white display-4 rounded py-3">
             Outschool Rebus Puzzles: Management
           </h1>
         </Col>

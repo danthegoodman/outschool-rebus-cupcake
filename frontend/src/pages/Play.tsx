@@ -26,7 +26,7 @@ export default function PlayPage() {
       <Row className="py-4 mx-2 mt-4" xs={2}>
         <Col xs={2} />
         <Col className="px-5 mx-2 text-center " xs={8}>
-          <h1 className="bg-blurple text-white rounded py-3">
+          <h1 className="bg-blurple text-white display-4 rounded py-3">
             Outschool Rebus Puzzles: Play!
           </h1>
         </Col>
@@ -129,7 +129,7 @@ function PlayGame(props: { gameId: string }) {
   }, [data, doMarkHacker]);
 
   const isAllCorrect = useMemo(() => {
-    if(guesses.length === 0) return false;
+    if (guesses.length === 0) return false;
     const totalCorrect = data?.solutions.reduce((t, c, i) => {
       const guess = guesses[i];
       if (guess?.toLowerCase() === c.toLowerCase()) {

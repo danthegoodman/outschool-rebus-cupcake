@@ -19,7 +19,7 @@ export default function StartMenu() {
           <Jumbotron className="m-4 p-4 bg-mango rounded">
             <Row>
               <Col>
-                <h1 className="text-white bg-blurple rounded d-flex justify-content-center py-2">
+                <h1 className="text-white display-2 bg-blurple rounded d-flex justify-content-center py-2">
                   Outschool Rebus Puzzles
                 </h1>
                 <h4 className="lead d-flex justify-content-center">
