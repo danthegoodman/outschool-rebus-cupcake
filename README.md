@@ -1,6 +1,7 @@
 # About
 
 Hosted on deno.dev: [outschool-cupcake-rebus.deno.dev](https://outschool-cupcake-rebus.deno.dev)
+The database contains private data and so you must be an outschool employee to access it.
 
 # Emojis
 
