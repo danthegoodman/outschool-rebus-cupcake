@@ -9,11 +9,11 @@ export async function handleGameRequest(request: Request, url: URL) {
   if(!id) throw new Error("Missing id");
 
   if (request.method === "GET") {
-    return handleGameGetRequest(request, id);
+    return await handleGameGetRequest(request, id);
   }
 
   if (request.method === "POST") {
-    return handleGamePostRequest(request, id);
+    return await handleGamePostRequest(request, id);
   }
 
   return textResponse("Invalid HTTP method", 405);
@@ -56,8 +56,10 @@ async function handleGameGetRequest(req: Request, id: string){
 }
 
 async function handleGamePostRequest(req: Request, id: string){
-  const clientGame = await req.json();
-  //TODO input validation
+  const clientGame: ClientGame = await req.json();
+  if(id !== clientGame.id){
+    throw new Error("Mismatched ID on game and in URL");
+  }
   await ddbPut<DynamoGameItem>(TABLE, mapClientGame(clientGame))
   return jsonResponse(clientGame);
 }
@@ -66,7 +68,7 @@ async function createNewGame(email: string, id: string){
   const allPuzzles = await getPuzzlesFromDynamoDB();
   const puzzles:ClientPuzzle[] = shuffle(allPuzzles).slice(0, 10);
 
-  let ddbGame = mapClientGame({
+  const ddbGame = mapClientGame({
     email,
     id,
     puzzles: puzzles.map(it=>it.puzzle),
@@ -80,7 +82,7 @@ async function createNewGame(email: string, id: string){
 }
 
 function mapDynamoGame(item: DynamoGameItem): ClientGame{
-  let mapStr = (it: {S:string})=> it.S;
+  const mapStr = (it: {S:string})=> it.S;
   return {
     email: item.e.S,
     id: item.i.S,
@@ -92,7 +94,7 @@ function mapDynamoGame(item: DynamoGameItem): ClientGame{
   }
 }
 function mapClientGame(item: ClientGame): DynamoGameItem{
-  let mapStr = (it: string)=> ({S: it});
+  const mapStr = (it: string)=> ({S: it});
   return {
     e: {S: item.email},
     i: {S: item.id},

@@ -18,14 +18,9 @@ In case of a conflict, custom emojis are preferred over the apple ones.
 ```shell
 # Setup
 brew install deno
-deno install --allow-read --allow-write --allow-env --allow-net \
-    --allow-run --no-check -f https://deno.land/x/deploy/deployctl.ts
-
-# Add deno to path
-export PATH="/Users/username/.deno/bin:$PATH"
 
 # Run backend
-apg deployctl run --watch --no-check server.ts
+apg deno task serve
 
 # Run frontend 
 cd frontend && yarn start

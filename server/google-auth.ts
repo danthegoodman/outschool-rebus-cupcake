@@ -43,7 +43,7 @@ export function handleRequestNeedingAuth(req: Request, url: URL){
   targ.searchParams.set('response_type', 'code');
   targ.searchParams.set('scope', 'email');
   targ.searchParams.set('prompt', 'select_account');
-  let xFwd = req.headers.get('x-forwarded-host');
+  const xFwd = req.headers.get('x-forwarded-host');
   if(xFwd){
     targ.searchParams.set('state', `xfwd=${xFwd}`)
   }

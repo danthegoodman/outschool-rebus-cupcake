@@ -1,3 +1,4 @@
+import { serve } from "https://deno.land/std@0.140.0/http/server.ts";
 import { handlePublicFile } from "./server/public-files.ts";
 import { textResponse } from "./server/util.ts";
 import { handleRebusRequest } from "./server/rebus-db.ts";
@@ -44,10 +45,10 @@ async function handleRequest(request: Request): Promise<Response>{
   }
 }
 
-addEventListener("fetch", async (event) => {
+serve(async (req) => {
   let resp: Response;
   try {
-    resp = await handleRequest(event.request);
+    resp = await handleRequest(req);
     if(!resp) throw new Error("No response given");
   } catch (error) {
     console.error(error);
@@ -55,12 +56,11 @@ addEventListener("fetch", async (event) => {
   }
 
   if(isDevelopment){
-    const req = event.request;
     let message = `${req.method} ${req.url} => ${resp.status}`;
     if(resp.headers.has('Location')){
       message += ' ' + resp.headers.get('Location')
     }
     console.log(message);
   }
-  event.respondWith(resp);
-});
+  return resp;
+}, isDevelopment ? {port: 8080} : {});

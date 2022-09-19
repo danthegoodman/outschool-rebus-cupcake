@@ -5,7 +5,7 @@ export function textResponse(content: string, status: number){
   });
 }
 
-export function jsonResponse(content: any){
+export function jsonResponse(content: unknown){
   return new Response(JSON.stringify(content), {
     headers: {"Content-Type": 'application/json'},
   });
