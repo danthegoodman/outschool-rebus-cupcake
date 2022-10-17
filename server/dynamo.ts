@@ -40,6 +40,21 @@ export async function ddbPut<T>(table: string, item: T) {
   });
 }
 
+export interface UpdateRequest<K>{
+  TableName: string,
+  Key: K,
+  ExpressionAttributeNames?: Record<string, string>
+  ReturnConsumedCapacity?: string
+  ReturnItemCollectionMetrics?: string
+  ReturnValues?: string;
+  UpdateExpression?: string
+  ExpressionAttributeValues?: Record<string, unknown>;
+}
+export async function ddbUpdate<K, O>(req: UpdateRequest<K>): Promise<O> {
+  const {Attributes} = await ddbRequest("UpdateItem", req);
+  return Attributes;
+}
+
 export async function ddbDelete<T>(table: string, key: T) {
   await ddbRequest("DeleteItem", {
     TableName: table,
