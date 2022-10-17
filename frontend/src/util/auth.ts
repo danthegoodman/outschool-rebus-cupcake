@@ -15,3 +15,8 @@ export function getUserData(): UserData {
   userData = {email, picture};
   return userData;
 }
+
+export function isUserAdmin(): boolean {
+  const email = getUserData()?.email;
+  return email === "danny@outschool.com" || email === "ana.simmons@outschol.com"
+}

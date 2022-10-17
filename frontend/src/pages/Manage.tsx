@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 import useFetch from "use-http";
 import { RebusPuzzle } from "../component/RebusPuzzle";
-import { getUserData } from "../util/auth";
+import {getUserData, isUserAdmin} from "../util/auth";
 
 export default function ManageView() {
   return (
@@ -178,7 +178,7 @@ function RebusRow({
     onSelect && onSelect(rebus);
   }
 
-  const canEdit = rebus.contributor === getUserData().email;
+  const canEdit = rebus.contributor === getUserData().email || isUserAdmin();
 
   return (
     <tr>
