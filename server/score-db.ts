@@ -1,6 +1,6 @@
 import {jsonResponse, textResponse} from "./util.ts";
 import {getAuth} from "./google-auth.ts";
-import {ddbGet, ddbUpdate} from "./dynamo.ts";
+import {ddbScanAll, ddbGet, ddbUpdate} from "./dynamo.ts";
 
 export async function handleScoreRequest(request: Request, url: URL) {
   if (request.method === "GET") {
@@ -9,6 +9,14 @@ export async function handleScoreRequest(request: Request, url: URL) {
 
   if (request.method === "PUT") {
     return await handleScorePutRequest(request);
+  }
+
+  return textResponse("Invalid HTTP method", 405);
+}
+
+export async function handleScoreboardRequest(request: Request, url: URL) {
+  if (request.method === "GET") {
+    return await handleScoreboardGetRequest(request, url);
   }
 
   return textResponse("Invalid HTTP method", 405);
@@ -40,6 +48,11 @@ async function handleScoreGetRequest(req: Request, url: URL){
   return jsonResponse(
     mapDynamoScore(scoreItem ?? {e: {S: email}, s: {N: "0"}})
   );
+}
+
+async function handleScoreboardGetRequest(req: Request, url: URL){
+  const items = await ddbScanAll<DynamoScoreItem>(TABLE);
+  return jsonResponse({scores: items.map(mapDynamoScore)});
 }
 
 async function handleScorePutRequest(req: Request){

@@ -11,7 +11,7 @@ import {
 } from "./server/google-auth.ts";
 import {isDevelopment} from "./server/constants.ts";
 import {handleGameRequest} from "./server/game-db.ts";
-import {handleScoreRequest} from "./server/score-db.ts";
+import {handleScoreRequest, handleScoreboardRequest} from "./server/score-db.ts";
 
 async function handleRequest(request: Request): Promise<Response>{
   const url = new URL(request.url);
@@ -43,6 +43,8 @@ async function handleRequest(request: Request): Promise<Response>{
       return handleGameRequest(request, url);
     case "/api/score":
       return handleScoreRequest(request, url);
+    case "/api/scoreboard":
+      return handleScoreboardRequest(request, url);
     default:
       return handlePublicFile(url.pathname);
   }
