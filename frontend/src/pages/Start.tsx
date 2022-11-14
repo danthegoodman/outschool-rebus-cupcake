@@ -43,7 +43,7 @@ export default function StartMenu() {
             <Row className="align-middle pt-2 mb-1 d-flex justify-content-center">
               <Col className="d-flex justify-content-center" xs={5} md={4}>
                 <Button tag={Link} color="blurple" to="/play">
-                  Play!
+                  Play Classic Mode!
                 </Button>
               </Col>
               <Col
@@ -57,10 +57,32 @@ export default function StartMenu() {
                 </h4>
               </Col>
               <Col className="d-flex justify-content-center" xs={5} md={4}>
-                <Button tag={Link} color="blurple" to="/manage">
-                  Manage!
+                <Button tag={Link} color="blurple" to="/play-timed">
+                  Play NEW Timed Mode!
                 </Button>
               </Col>
+            </Row>
+            <Row className="align-middle pt-2 mb-1 d-flex justify-content-center">
+             <Col className="d-flex justify-content-center" xs={5} md={4}>
+               <Button tag={Link} color="blurple" to="/scoreboard">
+                 Scoreboard
+               </Button>
+             </Col>
+             <Col
+             className="d-flex justify-content-center align-bottom"
+             xs={2}
+             >
+             <h4>
+               <SingleEmoji shortName="sparkles" />
+               OR
+               <SingleEmoji shortName="sparkles" />
+             </h4>
+           </Col>
+           <Col className="d-flex justify-content-center" xs={5} md={4}>
+             <Button tag={Link} color="blurple" to="/manage">
+               Manage!
+             </Button>
+           </Col> 
             </Row>
           </Jumbotron>
         </Col>

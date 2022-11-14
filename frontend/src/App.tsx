@@ -14,6 +14,12 @@ export function AppRoot() {
         <Route path="/play/:gameId?">
           <Play />
         </Route>
+        <Route path="/play-timed/:gameId?">
+          <PlayTimed />  
+        </Route>
+        <Route path="/scoreboard">
+          <Scoreboard />  
+        </Route>        
         <Route path="/manage">
           <ManageView />
         </Route>
