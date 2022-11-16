@@ -26,14 +26,14 @@ export function Boombox() {
   const color = useRandomColor();
 
   return (
-    <div>
+    <div className="p-4 m-4 bg-shadow rounded">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 849.86 587.75"
         style={{
           fill: color,
           transition: "fill ease-in-out 1s",
-          stroke: "black",
+          stroke: color,
         }}
       >
         <g id="Layer_2" data-name="Layer 2">

@@ -5,5 +5,18 @@ $theme-colors: (
   "blurple": #6e51fd,
 );
 
+@font-face {
+  font-family: "Archivo";
+  src: url("./Archivo-VariableFont.ttf") format("truetype-variations");
+  font-weight: 125 950;
+  font-stretch: 75% 125%;
+  font-style: normal;
+}
+
+body, h1, h2, h3, h4 {
+  font-family: "Archivo", -apple-system, sans-serif;
+}
+
+
 // Bootstrap and its default variables
 @import "node_modules/bootstrap/scss/bootstrap";
