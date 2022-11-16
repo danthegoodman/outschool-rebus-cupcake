@@ -4,6 +4,7 @@ import ManageView from "./pages/Manage";
 import StartMenu from "./pages/Start";
 import Play from "./pages/Play";
 import Practice from "./pages/Practice";
+import {Scoreboard} from "./pages/Scoreboard";
 
 export function AppRoot() {
   return (
@@ -20,6 +21,9 @@ export function AppRoot() {
         </Route>
         <Route path="/manage">
           <ManageView />
+        </Route>
+        <Route path="/scoreboard">
+          <Scoreboard/>
         </Route>
         <Route>
           <Redirect to="/start" />

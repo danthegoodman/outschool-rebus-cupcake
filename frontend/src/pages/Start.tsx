@@ -2,7 +2,8 @@ import { Button, Col, Jumbotron, Row } from "reactstrap";
 import { Link } from "react-router-dom";
 import { Boombox } from "../component/Boombox";
 import { SingleEmoji } from "../component/RebusPuzzle";
-import { Scoreboard } from "../component/Scoreboard"
+import { TopScores } from "../component/TopScores";
+import React from "react";
 
 export default function StartMenu() {
   return (
@@ -58,7 +59,7 @@ export default function StartMenu() {
                 className="d-flex justify-content-center align-bottom"
                 xs={1}
               >
-                <h4><SingleEmoji shortName="sparkles" /></h4>
+                <h4><SingleEmoji shortName="large_blue_diamond" /></h4>
               </Col>
               <Col className="d-flex justify-content-center" xs={5} md={3}>
                 <Button tag={Link} color="blurple" to="/play">
@@ -69,7 +70,7 @@ export default function StartMenu() {
                 className="d-flex justify-content-center align-bottom"
                 xs={1}
               >
-                <h4><SingleEmoji shortName="sparkles" /></h4>
+                <h4><SingleEmoji shortName="large_blue_diamond" /></h4>
               </Col>
               <Col className="d-flex justify-content-center" xs={5} md={3}>
                 <Button tag={Link} color="blurple" to="/manage">
@@ -84,7 +85,25 @@ export default function StartMenu() {
       <Row className="align-middle d-flex justify-content-center">
       <Col xs={12} md={10}>
       <Jumbotron className="py-4 my-4 bg-mango rounded">
-        <Scoreboard />
+        <Row className="py-2" xs={1}>
+          <Col xs={0} md={2}/>
+          <Col className="text-center " xs={12} md={8}>
+            <Link to={'/scoreboard'} style={{textDecoration: 'none'}}>
+              <h2
+                className="text-white text-center archivo-black bg-blurple rounded py-2">
+                Scoreboard!
+              </h2>
+            </Link>
+          </Col>
+          <Col xs={0} md={1}/>
+        </Row>
+        <Row className="py-2 d-flex justify-content-center">
+          <Col xs={0} md={1}/>
+          <Col xs={12} md={10}>
+            <TopScores/>
+          </Col>
+          <Col xs={0} md={1}/>
+        </Row>
       </Jumbotron>
       </Col>  
       </Row>
