@@ -63,7 +63,7 @@ async function handleScorePutRequest(req: Request){
     throw new Error("Missing or invalid 'points' field");
   }
 
-  if(points < 1 || 5 < points){
+  if(points < 1 || 30 < points){
     throw new Error("Invalid number of points submitted");
   }
   const result = await ddbUpdate<DynamoScoreKey, DynamoScoreItem>({

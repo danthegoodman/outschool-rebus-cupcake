@@ -46,7 +46,7 @@ export default function ManageView() {
   );
 }
 
-type IRebus = {
+export type IRebus = {
   puzzle: string;
   solution: string;
   hint: string;
