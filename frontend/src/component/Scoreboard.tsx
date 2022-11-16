@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {Col, Row, Table} from "reactstrap";
+import {sortBy} from 'lodash';
 import useFetch from "use-http";
 
 export function Scoreboard() {
@@ -51,24 +52,40 @@ function TopScores() {
           <th className="archivo-black">Score</th>
         </tr>
         </thead>
-        <tbody>{data.scores.map((item, ndx) => renderRow(ndx))}</tbody>
+        <Rows scores={data.scores}/>
       </Table>
     </div>
   );
+}
 
-  function renderRow(index: number) {
-    const user = data?.scores[index].email ?? "";
-    const score = data?.scores[index].score ?? "";
+function Rows(props: {scores: ScoreRecord[]}){
+  type RowData = ScoreRecord & {place: number};
+  const rows = useMemo(()=>scoresToRowData(props.scores), [props.scores])
+  return <tbody>{rows.map(renderRow)}</tbody>
 
+  function scoresToRowData(scores: ScoreRecord[]): RowData[]{
+    const result = sortBy(scores, [it=> -it.score, it=>it.email])
+      .map((it, ndx)=>({...it, place: ndx+1}));
+    for(let i = 1; i < result.length; i++){
+      const curr = result[i];
+      const prev = result[i-1];
+      if(curr.score === prev.score){
+        curr.place = prev.place;
+      }
+    }
+    return result;
+  }
+
+  function renderRow({email, score, place}: RowData) {
     return (
-      <tr key={index}>
+      <tr key={email}>
         <td className="align-middle p-1">
           <div className="label">Place</div>
-          <h4 className="archivo-paragraph">{index + 1}.</h4>
+          <h4 className="archivo-paragraph">{place}.</h4>
         </td>
         <td className="align-middle">
           <div className="label">User</div>
-          <h4 className="archivo-paragraph">{user}</h4>
+          <h4 className="archivo-paragraph">{email}</h4>
         </td>
         <td className="align-middle px-2">
           <div className="label">Score</div>
@@ -76,6 +93,6 @@ function TopScores() {
         </td>
       </tr>
     );
-
   }
+
 }
