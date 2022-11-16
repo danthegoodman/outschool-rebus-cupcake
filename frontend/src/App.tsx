@@ -3,6 +3,7 @@ import { Container } from "reactstrap";
 import ManageView from "./pages/Manage";
 import StartMenu from "./pages/Start";
 import Play from "./pages/Play";
+import Practice from "./pages/Practice";
 
 export function AppRoot() {
   return (
@@ -11,8 +12,11 @@ export function AppRoot() {
         <Route path="/start">
           <StartMenu />
         </Route>
-        <Route path="/play/:gameId?">
+        <Route path="/play">
           <Play />
+        </Route>
+        <Route path="/practice/:gameId?">
+          <Practice />
         </Route>
         <Route path="/manage">
           <ManageView />

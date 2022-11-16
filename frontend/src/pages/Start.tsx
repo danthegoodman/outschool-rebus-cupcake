@@ -29,34 +29,48 @@ export default function StartMenu() {
               </Col>
             </Row>
             <Row className="align-middle pt-3 d-flex justify-content-center">
-              <Col xs={4}>
-                <h3 className="text-center">Start a game:</h3>
+              <Col xs={3}>
+                <h3 className="text-center">Get Warmed Up</h3>
               </Col>
               <Col
                 className="d-flex justify-content-center align-bottom"
-                xs={2}
+                xs={1}
               ></Col>
-              <Col className="d-flex justify-content-center" xs={4}>
-                <h3>Add/delete rebus puzzles:</h3>
+              <Col xs={3}>
+                <h3 className="text-center">Start a game</h3>
+              </Col>
+              <Col
+                className="d-flex justify-content-center align-bottom"
+                xs={1}
+              ></Col>
+              <Col className="d-flex justify-content-center" xs={3}>
+                <h3>Add/delete rebus puzzles</h3>
               </Col>
             </Row>
             <Row className="align-middle pt-2 mb-1 d-flex justify-content-center">
-              <Col className="d-flex justify-content-center" xs={5} md={4}>
+              <Col className="d-flex justify-content-center" xs={5} md={3}>
+                <Button tag={Link} color="blurple" to="/practice">
+                  Practice!
+                </Button>
+              </Col>
+              <Col
+                className="d-flex justify-content-center align-bottom"
+                xs={1}
+              >
+                <h4><SingleEmoji shortName="sparkles" /></h4>
+              </Col>
+              <Col className="d-flex justify-content-center" xs={5} md={3}>
                 <Button tag={Link} color="blurple" to="/play">
                   Play!
                 </Button>
               </Col>
               <Col
                 className="d-flex justify-content-center align-bottom"
-                xs={2}
+                xs={1}
               >
-                <h4>
-                  <SingleEmoji shortName="sparkles" />
-                  OR
-                  <SingleEmoji shortName="sparkles" />
-                </h4>
+                <h4><SingleEmoji shortName="sparkles" /></h4>
               </Col>
-              <Col className="d-flex justify-content-center" xs={5} md={4}>
+              <Col className="d-flex justify-content-center" xs={5} md={3}>
                 <Button tag={Link} color="blurple" to="/manage">
                   Manage!
                 </Button>
